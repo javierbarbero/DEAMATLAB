@@ -23,7 +23,8 @@ function [ options ] = getDEAoptions( n, varargin )
     addPar(p,'rts','crs',...
                 @(x) any(validatestring(x, {'crs','vrs'})));
     addPar(p, 'Gx', [], @(x) isnumeric(x) );
-    addPar(p, 'Gy', [], @(x) isnumeric(x) );    
+    addPar(p, 'Gy', [], @(x) isnumeric(x) );   
+    addPar(p, 'secondstep', 1, @(x) isnumeric(x) );
     % Special options (used by other functions)
     addPar(p, 'Xeval', [], @(x) isnumeric(x)  );
     addPar(p, 'Yeval', [], @(x) isnumeric(x)  );
@@ -35,6 +36,9 @@ function [ options ] = getDEAoptions( n, varargin )
     addPar(p, 'Yprice', [], @(x) isnumeric(x));
     % Undesarible outputs
     addPar(p, 'Yueval', [], @(x) isnumeric(x));
+    % Bootstrap
+    addPar(p, 'nreps', 200, @(x) isnumeric(x) & (x > 0) );
+    addPar(p, 'alpha', 0.05, @(x) isnumeric(x) & (x > 0));
     
     p.parse(varargin{:})
     options = p.Results;

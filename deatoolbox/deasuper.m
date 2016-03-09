@@ -26,7 +26,7 @@ function [ out ] = deasuper( X, Y, varargin )
 %   http://www.deatoolbox.com
 %
 %   Version: 1.0
-%   LAST UPDATE: 1, March, 2016
+%   LAST UPDATE: 9, March, 2016
 %
 
     % Check size
@@ -39,7 +39,7 @@ function [ out ] = deasuper( X, Y, varargin )
     % Get number of DMUs (m), inputs (m) and outputs (s)
     [n, m] = size(X);
     s = size(Y,2);
-    nref = n;
+    neval = n;
     
     % Get DEA options
     options = getDEAoptions(n, varargin{:});
@@ -76,13 +76,13 @@ function [ out ] = deasuper( X, Y, varargin )
     end
     
     % Create variable to store results
-    lambda = nan(nref, n - 1);
-    slackX = nan(nref, m);
-    slackY = nan(nref, s);
+    lambda = nan(neval, n - 1);
+    slackX = nan(neval, m);
+    slackY = nan(neval, s);
     supereff = nan(n,1);
-    Xeff = nan(nref, m);
-    Yeff = nan(nref, s);
-    Eflag = nan(nref, 2);
+    Xeff = nan(neval, m);
+    Yeff = nan(neval, s);
+    Eflag = nan(neval, 2);
     
     % For each DMU
     for j=1:n
@@ -127,7 +127,7 @@ function [ out ] = deasuper( X, Y, varargin )
     end
     
     % SAVE results and input data
-    out = deaout('n', n, 'neval', nref', 's', s, 'm', m,...
+    out = deaout('n', n, 'neval', neval', 's', s, 'm', m,...
         'X', X, 'Y', Y, 'names', options.names,...
         'model', model, 'orient', orient, 'rts', rts,...
         'lambda', lambda, 'slack', slack,...

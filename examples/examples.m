@@ -4,7 +4,7 @@
 %   http://www.deatoolbox.com
 %
 %   Version: 1.0
-%   LAST UPDATE: 29, February, 2016
+%   LAST UPDATE: 9, March, 2016
 %
 
 % Clear and clc
@@ -106,7 +106,7 @@ Yu0 = [2; 5; 3; 3; 2];
 undesirable = deaund(X0, Y0, Yu0);
 deadisp(undesirable);
 
-% Malmquist-Luenberger
+%% Section 7: Productivity change: The Malmquist-Luenberger
 X1 = ones(5,1);
 Y1 = [8; 5.5; 2; 2; 4];
 Yu1 = [1; 3; 2; 4; 1];
@@ -121,7 +121,14 @@ Yu(:, :, 2) = Yu1;
 ml = deamalmluen(X, Y, Yu);
 deadisp(ml);
 
-%% Section 7: Advanced options, displaying and exporting results
+%% Section 8: Bootstrapping DEA estimators
+
+load 'deadataFLS'
+
+io_b = deaboot(X, Y, 'orient', 'io', 'nreps', 200, 'alpha', 0.05);
+deadisp(io_b);
+
+%% Section 9: Advanced options, displaying and exporting results
 
 % 7.1 Specifying DMU names
 X0 = ones(5,1);

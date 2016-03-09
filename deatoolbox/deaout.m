@@ -52,6 +52,11 @@ function [ out ] = deaout( varargin )
 %   - eff.MLTEC: Technical efficiency change.
 %   - eff.MLTC: Technical change.
 %
+%   DEA Bootstrap:
+%   - eff.o: Origianl efficiency.
+%   - eff.b: Bootstraped efficiency.
+%   - eff.c: Efficiency confidence interval.
+%
 %   Example
 %     
 %      model = deaout();
@@ -62,7 +67,7 @@ function [ out ] = deaout( varargin )
 %   http://www.deatoolbox.com
 %
 %   Version: 1.0
-%   LAST UPDATE: 1, March, 2016
+%   LAST UPDATE: 9, March, 2016
 %   
     
     
@@ -85,7 +90,8 @@ function [ out ] = deaout( varargin )
     addPar(p,'model','radial',...
                 @(x) any(validatestring(x,{'radial','radial-supereff','radial-malmquist',...
                 'directional','directional-supereff','directional-undesirable','directional-malmquist-luenberger',...
-                'additive','additive-supereff','allocative-cost','allocative-revenue','allocative-profit'})));  
+                'additive','additive-supereff','allocative-cost','allocative-revenue','allocative-profit',...
+                'radial-bootstrap'})));  
     addPar(p,'orient','none',...
                 @(x) any(validatestring(x,{'io','oo','ddf','none'})));
     addPar(p,'rts','crs',...
@@ -106,6 +112,10 @@ function [ out ] = deaout( varargin )
     addPar(p, 'r', NaN, @(x) isnumeric(x));
     addPar(p, 'Yu', NaN, @(x) isnumeric(x));
     addPar(p, 'Yueff', NaN, @(x) isnumeric(x));
+    
+    % Bootstrap
+    addPar(p, 'nreps', NaN, @(x) isnumeric(x));
+    addPar(p, 'alpha', NaN, @(x) isnumeric(x));
     
     p.parse(varargin{:})
     out = p.Results;

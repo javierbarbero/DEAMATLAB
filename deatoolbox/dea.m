@@ -14,6 +14,7 @@ function [ out ] = dea( X, Y, varargin)
 %   - 'Gx': input directions for 'ddf' orientation. Default is X.
 %   - 'Gy': output directions for 'ddf' orientation. Default is Y.
 %   - 'names': DMU names.
+%   - 'secondstep': 1 to compute input and output slacks. Default is 1.
 %
 %   Advanced parameters:
 %   - 'Xeval: inputs to evaluate if different from X.
@@ -31,7 +32,7 @@ function [ out ] = dea( X, Y, varargin)
 %   http://www.deatoolbox.com
 %
 %   Version: 1.0
-%   LAST UPDATE: 1, March, 2016
+%   LAST UPDATE: 9, March, 2016
 %
 
     % Check size
@@ -153,38 +154,43 @@ function [ out ] = dea( X, Y, varargin)
                 
                 % SECOND STEP
                 
-                % Objective function
-                f = [zeros(1, n), -ones(1, m + s)];
+                if(options.secondstep)
                 
-                % Constraints
-                Aeq = [ X', eye(m,m)  , zeros(m,s);
-                        Y', zeros(s,m), -eye(s,s);
-                       AeqRTS2];
-                beq = [theta .* Xeval(j,:)';
-                        Yeval(j,:)';
-                        beqRTS2];
-                lb = zeros(n + s + m, 1);
-                
-                % Optimize
-                [z, ~, exitflag] = linprog(f, [], [], Aeq, beq, lb, [], [], optimopts);
-                if exitflag ~= 1
-                    warning('DMU %i. Second Step. Optimization exit flag: %i', j, exitflag)
+                    % Objective function
+                    f = [zeros(1, n), -ones(1, m + s)];
+
+                    % Constraints
+                    Aeq = [ X', eye(m,m)  , zeros(m,s);
+                            Y', zeros(s,m), -eye(s,s);
+                           AeqRTS2];
+                    beq = [theta .* Xeval(j,:)';
+                            Yeval(j,:)';
+                            beqRTS2];
+                    lb = zeros(n + s + m, 1);
+
+                    % Optimize
+                    [z, ~, exitflag] = linprog(f, [], [], Aeq, beq, lb, [], [], optimopts);
+                    if exitflag ~= 1
+                        warning('DMU %i. Second Step. Optimization exit flag: %i', j, exitflag)
+                    end
+                    if isempty(z)
+                        warning('DMU %i. Second Step. Optimization doesn''t return a result. Results set to NaN.', j)
+                        z = nan(n + m + s + r, 1);                   
+                    end
+
+                    % Get results
+                    lambda(j,:) = z(1:n);
+                    slackX(j,:) = z(n + 1 : n + m);
+                    slackY(j,:) = z(n + m + 1 : n + m + s);                
+                    eff(j) = theta;
+                    Eflag(j, 2) = exitflag;
+
+                    % Compute efficient inputs and outputs
+                    Xeff(j,:) = repmat(eff(j), 1, m) .* Xeval(j,:) - slackX(j,:);
+                    Yeff(j,:) = Yeval(j,:) + slackY(j,:);
+                else
+                    eff(j) = theta;
                 end
-                if isempty(z)
-                    warning('DMU %i. Second Step. Optimization doesn''t return a result. Results set to NaN.', j)
-                    z = nan(n + m + s + r, 1);                   
-                end
-                
-                % Get results
-                lambda(j,:) = z(1:n);
-                slackX(j,:) = z(n + 1 : n + m);
-                slackY(j,:) = z(n + m + 1 : n + m + s);                
-                eff(j) = theta;
-                Eflag(j, 2) = exitflag;
-                
-                % Compute efficient inputs and outputs
-                Xeff(j,:) = repmat(eff(j), 1, m) .* Xeval(j,:) - slackX(j,:);
-                Yeff(j,:) = Yeval(j,:) + slackY(j,:);
                 
             end
             
@@ -226,40 +232,46 @@ function [ out ] = dea( X, Y, varargin)
                 Eflag(j, 1) = exitflag;
                 
                 % SECOND STEP
+                
+                if(options.secondstep)
                                  
-                % Objective function
-                f = -[zeros(1, n), ones(1, m + s)];
+                    % Objective function
+                    f = -[zeros(1, n), ones(1, m + s)];
+
+                    % Constraints
+                    Aeq = [ X', eye(m,m)  ,  zeros(m,s),  ;
+                            Y', zeros(s,m), -eye(s,s)  ;                       
+                           AeqRTS2];
+                    beq = [Xeval(j,:)'
+                           phi .* Yeval(j,:)';
+                           beqRTS2];
+                    lb = zeros(n + s + m, 1);
+
+                    % Optimize
+                    [z, ~, exitflag] = linprog(f, [], [], Aeq, beq, lb, [], [], optimopts);
+                    if exitflag ~= 1
+                        warning('DMU %i. Second Step. Optimization exit flag: %i', j, exitflag)
+                    end
+                    if isempty(z)
+                        warning('DMU %i. Second Step. Optimization doesn''t return a result. Results set to NaN.', j)
+                        z = nan(n + m + s + r, 1);                   
+                    end
+
+                    % Get results
+                    lambda(j,:) = z(1:n);
+                    slackX(j,:) = z(n + 1 : n + m);
+                    slackY(j,:) = z(n + m + 1 : n + m + s);                
+                    eff(j) = phi;
+                    Eflag(j, 2) = exitflag;
+
+                    % Compute efficient inputs and outputs
+                    Xeff(j,:) = Xeval(j,:) - slackX(j,:);
+                    Yeff(j,:) = repmat(eff(j), 1, s) .* Yeval(j,:) + slackY(j,:);
                 
-                % Constraints
-                Aeq = [ X', eye(m,m)  ,  zeros(m,s),  ;
-                        Y', zeros(s,m), -eye(s,s)  ;                       
-                       AeqRTS2];
-                beq = [Xeval(j,:)'
-                       phi .* Yeval(j,:)';
-                       beqRTS2];
-                lb = zeros(n + s + m, 1);
-                
-                % Optimize
-                [z, ~, exitflag] = linprog(f, [], [], Aeq, beq, lb, [], [], optimopts);
-                if exitflag ~= 1
-                    warning('DMU %i. Second Step. Optimization exit flag: %i', j, exitflag)
+                else
+                    eff(j) = phi;
                 end
-                if isempty(z)
-                    warning('DMU %i. Second Step. Optimization doesn''t return a result. Results set to NaN.', j)
-                    z = nan(n + m + s + r, 1);                   
-                end
-                
-                % Get results
-                lambda(j,:) = z(1:n);
-                slackX(j,:) = z(n + 1 : n + m);
-                slackY(j,:) = z(n + m + 1 : n + m + s);                
-                eff(j) = phi;
-                Eflag(j, 2) = exitflag;
-                
-                % Compute efficient inputs and outputs
-                Xeff(j,:) = Xeval(j,:) - slackX(j,:);
-                Yeff(j,:) = repmat(eff(j), 1, s) .* Yeval(j,:) + slackY(j,:);
-                
+                    
             end
             
             % Compute efficient inputs and outputs
@@ -321,45 +333,47 @@ function [ out ] = dea( X, Y, varargin)
                 Eflag(j, 1) = exitflag;
                 
                 % SECOND STEP
+                
+                if(options.secondstep)
                                  
-                % Objective function
-                f = -[zeros(1, n), ones(1, m + s)];
+                    % Objective function
+                    f = -[zeros(1, n), ones(1, m + s)];
+
+                    % Constraints
+                    Aeq = [ X', eye(m,m)  ,  zeros(m,s),  ;
+                            Y', zeros(s,m), -eye(s,s)  ;                       
+                           AeqRTS2];
+                    beq = [-beta .* Gx(j,:)' + Xeval(j,:)'
+                            beta .* Gy(j,:)' + Yeval(j,:)';
+                           beqRTS2];
+                    lb = zeros(n + s + m, 1);
+
+                    % Optimize
+                    [z, ~, exitflag] = linprog(f, [], [], Aeq, beq, lb, [], [], optimopts);
+                    if exitflag ~= 1
+                        warning('DMU %i. Second Step. Optimization exit flag: %i', j, exitflag)
+                    end
+                    if isempty(z)
+                        warning('DMU %i. Second Step. Optimization doesn''t return a result. Results set to NaN.', j)
+                        z = nan(n + m + s + r, 1);                   
+                    end
+
+                    % Get results
+                    lambda(j,:) = z(1:n);
+                    slackX(j,:) = z(n + 1 : n + m);
+                    slackY(j,:) = z(n + m + 1 : n + m + s);                
+                    eff(j) = beta;
+                    Eflag(j, 2) = exitflag;
+
+                    % Compute efficient inputs and outputs
+                    Xeff(j,:) = Xeval(j,:) - repmat(eff(j), 1, m) .* Gx(j,:) - slackX(j,:);
+                    Yeff(j,:) = Yeval(j,:) + repmat(eff(j), 1, s) .* Gy(j,:) + slackY(j,:);
                 
-                % Constraints
-                Aeq = [ X', eye(m,m)  ,  zeros(m,s),  ;
-                        Y', zeros(s,m), -eye(s,s)  ;                       
-                       AeqRTS2];
-                beq = [-beta .* Gx(j,:)' + Xeval(j,:)'
-                        beta .* Gy(j,:)' + Yeval(j,:)';
-                       beqRTS2];
-                lb = zeros(n + s + m, 1);
-                
-                % Optimize
-                [z, ~, exitflag] = linprog(f, [], [], Aeq, beq, lb, [], [], optimopts);
-                if exitflag ~= 1
-                    warning('DMU %i. Second Step. Optimization exit flag: %i', j, exitflag)
+                else
+                    eff(j) = beta;
                 end
-                if isempty(z)
-                    warning('DMU %i. Second Step. Optimization doesn''t return a result. Results set to NaN.', j)
-                    z = nan(n + m + s + r, 1);                   
-                end
-                
-                % Get results
-                lambda(j,:) = z(1:n);
-                slackX(j,:) = z(n + 1 : n + m);
-                slackY(j,:) = z(n + m + 1 : n + m + s);                
-                eff(j) = beta;
-                Eflag(j, 2) = exitflag;
-                
-                % Compute efficient inputs and outputs
-                Xeff(j,:) = Xeval(j,:) - repmat(eff(j), 1, m) .* Gx(j,:) - slackX(j,:);
-                Yeff(j,:) = Yeval(j,:) + repmat(eff(j), 1, s) .* Gy(j,:) + slackY(j,:);
                 
             end
-            
-            % Compute efficient inputs and outputs
-            % Xeff = Xeval - repmat(eff, 1, m) .* Gx - slackX;
-            % Yeff = Yeval + repmat(eff, 1, s) .* Gy + slackY;
 
             
     end   
