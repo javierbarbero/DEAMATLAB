@@ -9,6 +9,8 @@ function [ out ] = deaadditsuper( X, Y, varargin )
 %   Additional properties:
 %   - 'rts': returns to sacle. Constant returns to scale 'crs', variable
 %   returns to sacle 'vrs'.
+%   - 'rhoX': input slacks weights. Default is MIP: 1 ./ X.
+%   - 'rhoY': output slacks weights. Default is MIP: 1 ./ Y.
 %   - 'names': DMU names.
 %
 %   Example
@@ -21,7 +23,7 @@ function [ out ] = deaadditsuper( X, Y, varargin )
 %   http://www.deatoolbox.com
 %
 %   Version: 1.0
-%   LAST UPDATE: 1, March, 2016
+%   LAST UPDATE: 10, March, 2016
 %
 
     % Check size
@@ -83,6 +85,21 @@ function [ out ] = deaadditsuper( X, Y, varargin )
             beqRTS2super = 1;
     end
     
+    % SLACKS WEIGHTS
+    rhoX = options.rhoX;
+    rhoY = options.rhoY;
+    
+    if isempty(rhoX)
+        % rhoX = ones(size(X));
+        % MIP
+        rhoX = 1 ./ X;
+    end
+    if isempty(rhoY)
+        % rhoY = ones(size(Y));
+        % MIP
+        rhoY = 1 ./ Y;
+    end
+    
     % For each DMU
     for j=1:n
         
@@ -98,7 +115,7 @@ function [ out ] = deaadditsuper( X, Y, varargin )
             
             
             % Objective Function
-            fsuper = [zeros(1,n - 1), ones(1,m), ones(1,s)];
+            fsuper = [zeros(1,n - 1), rhoX(j,:) .* ones(1,m), rhoY(j,:) .* ones(1,s)];
             
             % Lower bound
             lbsuper = zeros(n + m + s - 1, 1);
@@ -124,7 +141,7 @@ function [ out ] = deaadditsuper( X, Y, varargin )
             lambda(j,:) = zsuper(1: n-1);
             slackX(j,:) = zsuper(n: n + m - 1);
             slackY(j,:) = zsuper(n + m: n + m + s -1);
-            supereff(j,:) = sum(slackX(j,:)) + sum(slackY(j,:));
+            supereff(j,:) = sum(rhoX(j,:) .* slackX(j,:)) + sum(rhoY(j,:) .* slackY(j,:));
             
             Xeff(j,:) = NaN;
             Yeff(j,:) = NaN;

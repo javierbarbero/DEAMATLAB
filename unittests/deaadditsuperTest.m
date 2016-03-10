@@ -11,9 +11,11 @@ X = [4 3; 7 3; 8 1; 4 2; 2 4; 10 1; 12 1];
 Y = ones(7,1);
 
 % SUPER EFFICIENCY CRS
-super_addit = deaadditsuper(X, Y);
+rhoX = ones(size(X));
+rhoY = ones(size(Y));
+super_addit = deaadditsuper(X, Y, 'rhoX', rhoX, 'rhoY', rhoY);
 
-%% Test super-efficiency-io-crs-eff
+%% Test super-efficiency-addit-crs-eff
 exp = [0.125; 0.2; 0.5];
 act = super_addit.eff(3:5);
 assert(all(abs(act - exp) < tol))

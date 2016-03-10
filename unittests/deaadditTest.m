@@ -9,10 +9,14 @@ tol = 1e-5;
 load 'deadataFLS'
 
 % ADDITIVE CRS
-add = deaaddit(X, Y);
+rhoX = ones(size(X));
+rhoY = ones(size(Y));
+add = deaaddit(X, Y, 'rhoX', rhoX, 'rhoY', rhoY);
 
 % ADDITIVE VRS
-add_vrs = deaaddit(X, Y, 'rts', 'vrs');
+rhoX = ones(size(X));
+rhoY = ones(size(Y));
+add_vrs = deaaddit(X, Y, 'rts', 'vrs', 'rhoX', rhoX, 'rhoY', rhoY);
 
 %% Test additive-crs-eff
 exp = [0.00000; 10.76923; 10.83784;  0.00000; 22.15385; 17.92308; 0.00000; 12.07692; 11.61379; 34.38462; 4.00000];

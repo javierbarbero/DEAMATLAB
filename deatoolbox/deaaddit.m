@@ -158,7 +158,7 @@ function [ out ] = deaaddit( X, Y, varargin )
     lambda = Z(:,1:n);
     slackX = Z(:, n + 1 : n + m);
     slackY = Z(:, n + m + 1 : n + m + s);      
-    eff = sum(rhoX .* slackX, 2) + sum(rhoY .* slackY, 2);
+    eff = sum(rhoX(1:neval, :) .* slackX, 2) + sum(rhoY(1:neval, :) .* slackY, 2);
     
     % Compute efficient inputs and outputs
     Xeff = Xeval - slackX;
