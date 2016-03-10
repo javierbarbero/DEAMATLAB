@@ -49,10 +49,14 @@ deadisp(ddf_scale);
 add_vrs = deaaddit(X, Y, 'rts', 'vrs');
 deadisp(add_vrs);
 
-rhoX = 1 ./ X;
-rhoY = 1 ./ Y;
-add_mip = deaaddit(X, Y, 'rts', 'vrs', 'rhoX', rhoX, 'rhoY', rhoY);
-deadisp(add_mip);
+% Range Adjusted Measure (RAM)
+n = size(X, 1);
+m = size(X, 2);
+s = size(Y, 2);
+rhoX = repelem(1 ./ ((m + s) * range(X, 1)), n, 1);
+rhoY = repelem(1 ./ ((m + s) * range(Y, 1)), n, 1);
+add_ram = deaaddit(X, Y, 'rts', 'vrs', 'rhoX', rhoX, 'rhoY', rhoY);
+deadisp(add_ram);
 
 % 3.5 Super-efficiency models
 super = deasuper(X, Y, 'orient', 'io');
