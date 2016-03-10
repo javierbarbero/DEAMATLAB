@@ -11,8 +11,8 @@ function [ out ] = deaaddit( X, Y, varargin )
 %   Additional properties:
 %   - 'rts': returns to sacle. Constant returns to scale 'crs', variable
 %   returns to sacle 'vrs'.
-%   - 'rhoX': input slacks weights. Default is matrix of ones.
-%   - 'rhoY': output slacks weights. Default is matrix of ones.
+%   - 'rhoX': input slacks weights. Default is MIP: 1 ./ X.
+%   - 'rhoY': output slacks weights. Default is MIP: 1 ./ Y.
 %   - 'names': DMU names.
 %
 %   Advanced parameters:
@@ -102,10 +102,14 @@ function [ out ] = deaaddit( X, Y, varargin )
     rhoY = options.rhoY;
     
     if isempty(rhoX)
-        rhoX = ones(size(X));
+        % rhoX = ones(size(X));
+        % MIP
+        rhoX = 1 ./ X;
     end
     if isempty(rhoY)
-        rhoY = ones(size(Y));
+        % rhoY = ones(size(Y));
+        % MIP
+        rhoY = 1 ./ Y;
     end
         
     % OBJECTIVE FUNCTION
