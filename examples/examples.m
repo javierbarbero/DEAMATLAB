@@ -4,7 +4,7 @@
 %   http://www.deatoolbox.com
 %
 %   Version: 1.0
-%   LAST UPDATE: 9, March, 2016
+%   LAST UPDATE: 10, March, 2016
 %
 
 % Clear and clc
@@ -48,6 +48,11 @@ deadisp(ddf_scale);
 % 3.4 The additive model
 add_vrs = deaaddit(X, Y, 'rts', 'vrs');
 deadisp(add_vrs);
+
+rhoX = 1 ./ X;
+rhoY = 1 ./ Y;
+add_mip = deaaddit(X, Y, 'rts', 'vrs', 'rhoX', rhoX, 'rhoY', rhoY);
+deadisp(add_mip);
 
 % 3.5 Super-efficiency models
 super = deasuper(X, Y, 'orient', 'io');

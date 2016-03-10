@@ -28,7 +28,9 @@ function [ options ] = getDEAoptions( n, varargin )
     % Special options (used by other functions)
     addPar(p, 'Xeval', [], @(x) isnumeric(x)  );
     addPar(p, 'Yeval', [], @(x) isnumeric(x)  );
-    %addPar(p, 'evalDMU', 1:1:n, @(x) isnumeric(x) && all(x > 0) && all(x <= n) );
+    % Additive
+    addPar(p, 'rhoX', [], @(x) isnumeric(x) );
+    addPar(p, 'rhoY', [], @(x) isnumeric(x) );
     % Malmquist Index
     addPar(p, 'fixbaset', [], @(x) ismember(x, [0, 1]));
     % Allocative Efficiency

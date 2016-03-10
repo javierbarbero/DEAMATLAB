@@ -1,14 +1,18 @@
 function [ out ] = deaaddit( X, Y, varargin )
-%DEAADDIT Data envelopment analysis additive model
-%   Computes data envelopment analysis additive model
+%DEAADDIT Data envelopment analysis weighted additive model
+%   Computes data envelopment analysis weighted additive model
 %
 %   out = DEAADDIT(X, Y, Name, Value) computes data envelopment analysis
-%   additive model with inputs X and outputs Y. Model properties are specified using 
-%   one or more Name ,Value pair arguments.
+%   weighted additive model with inputs X and outputs Y. Model properties 
+%   are specified using one or more Name ,Value pair arguments. If weights
+%   'rhoX' and 'rhoY' are not specified, the standard additive program is
+%   computed.
 %
 %   Additional properties:
 %   - 'rts': returns to sacle. Constant returns to scale 'crs', variable
 %   returns to sacle 'vrs'.
+%   - 'rhoX': input slacks weights. Default is matrix of ones.
+%   - 'rhoY': output slacks weights. Default is matrix of ones.
 %   - 'names': DMU names.
 %
 %   Advanced parameters:
@@ -25,7 +29,7 @@ function [ out ] = deaaddit( X, Y, varargin )
 %   http://www.deatoolbox.com
 %
 %   Version: 1.0
-%   LAST UPDATE: 1, March, 2016
+%   LAST UPDATE: 10, March, 2016
 %
 
     % Check size
@@ -92,12 +96,23 @@ function [ out ] = deaaddit( X, Y, varargin )
             AeqRTS2 = [ones(1,n), zeros(1,m), zeros(1,s)];
             beqRTS2 = 1;
     end
+    
+    % SLACKS WEIGHTS
+    rhoX = options.rhoX;
+    rhoY = options.rhoY;
+    
+    if isempty(rhoX)
+        rhoX = ones(size(X));
+    end
+    if isempty(rhoY)
+        rhoY = ones(size(Y));
+    end
         
     % OBJECTIVE FUNCTION
     % n zeros for \lambda
     % -ones for input slacks: m
     % -ones for output slacks: s    
-    f = [zeros(1,n), -ones(1,m), -ones(1,s)];
+    % Moved to the for loop to include weights    
     
     % LOWER BOUNDS
     % Zero for n, m, s
@@ -115,6 +130,10 @@ function [ out ] = deaaddit( X, Y, varargin )
     % OPTIMIZE: SOLVE LINEAR PROGRAMMING MODEL
     % Solve linear problem for each DMU
     for j=1:neval
+        
+        % Objective function with weights
+        f = -[zeros(1,n), rhoX(j,:) .* ones(1,m), rhoY(j,:) .* ones(1,s)];
+        
         Aeq = [ X',   eye(m,m),  zeros(m,s);
                 Y', zeros(s,m), -eye(s,s);               
                AeqRTS2];
@@ -135,7 +154,7 @@ function [ out ] = deaaddit( X, Y, varargin )
     lambda = Z(:,1:n);
     slackX = Z(:, n + 1 : n + m);
     slackY = Z(:, n + m + 1 : n + m + s);      
-    eff = sum(slackX, 2) + sum(slackY, 2);
+    eff = sum(rhoX .* slackX, 2) + sum(rhoY .* slackY, 2);
     
     % Compute efficient inputs and outputs
     Xeff = Xeval - slackX;
