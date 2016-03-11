@@ -13,7 +13,6 @@ function [ out ] = deaboot(  X, Y, varargin )
 %   - 'rts': returns to sacle. Constant returns to scale 'crs', variable
 %   returns to sacle 'vrs'.
 %   - 'names': DMU names.
-%   - 'secondstep': 1 to compute input and output slacks. Default is 1.
 %   - 'nreps': number of bootstrap replications. Default is 200.
 %   - 'alpha': alpha value for confidence intervals. Default is 0.05.
 %
@@ -28,7 +27,7 @@ function [ out ] = deaboot(  X, Y, varargin )
 %   http://www.deatoolbox.com
 %
 %   Version: 1.0
-%   LAST UPDATE: 9, March, 2016
+%   LAST UPDATE: 11, March, 2016
 %
 
     % Check size
@@ -101,6 +100,8 @@ function [ out ] = deaboot(  X, Y, varargin )
     
     Eflag = nan(n, nreps);
     effBoot = nan(n, nreps);
+    
+    % For each replication
     parfor i=1:nreps
         % Dario and Simar (2007)
 

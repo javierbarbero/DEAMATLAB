@@ -31,7 +31,7 @@ function [ name, format ] = getDEAformat( fieldname, orient )
 %   http://www.deatoolbox.com
 %
 %   Version: 1.0
-%   LAST UPDATE: 9, March, 2016
+%   LAST UPDATE: 11, March, 2016
 %
 
     if nargin < 2
@@ -152,6 +152,43 @@ function [ name, format ] = getDEAformat( fieldname, orient )
             format = fmtNumber;
         case 'eff.c'
             name = 'effCI';
+            format = fmtNumber;
+        % Malmquist Bootstrap
+        case 'eff.M.o'
+            name = 'M';
+            format = fmtNumber;
+        case 'eff.M.b'
+            name = 'Mboot';
+            format = fmtNumber;
+        case 'eff.M.cL'
+            name = 'McL';
+            format = fmtNumber;
+        case 'eff.M.cU'
+            name = 'McU';
+            format = fmtNumber;
+        case 'eff.MTEC.o'
+            name = 'MTEC';
+            format = fmtNumber;
+        case 'eff.MTEC.b'
+            name = 'MTECboot';
+            format = fmtNumber;
+        case 'eff.MTEC.cL'
+            name = 'MTECcL';
+            format = fmtNumber;
+        case 'eff.MTEC.cU'
+            name = 'MTECcU';
+            format = fmtNumber;
+        case 'eff.MTC.o'
+            name = 'MTC';
+            format = fmtNumber;
+        case 'eff.MTC.b'
+            name = 'MTCboot';
+            format = fmtNumber;
+        case 'eff.MTC.cL'
+            name = 'MTCcL';
+            format = fmtNumber;
+        case 'eff.MTC.cU'
+            name = 'MTCcU';
             format = fmtNumber;
         otherwise
             error('Field %s not found', fieldname)

@@ -18,7 +18,7 @@ function [  ] = deadisp( out, dispstr )
 %   http://www.deatoolbox.com
 %
 %   Version: 1.0
-%   LAST UPDATE: 9, March, 2016
+%   LAST UPDATE: 11, March, 2016
 %
     
     if nargin < 2
@@ -77,14 +77,14 @@ function [  ] = deadisp( out, dispstr )
         fprintf('Bootstrap replications: %i \n', out.nreps);
     end
     if ~isnan(out.alpha)
-        fprintf('Significacne level: %4.2f \n', out.alpha);
+        fprintf('Significance level: %4.2f \n', out.alpha);
     end
     
     fprintf('\n');
         
     % Malmquist
     switch(out.model)
-        case {'radial-malmquist','directional-malmquist-luenberger'}
+        case {'radial-malmquist','directional-malmquist-luenberger','radial-malmquist-bootstrap'}
         
             switch(out.model)
                 case {'radial-malmquist'}
