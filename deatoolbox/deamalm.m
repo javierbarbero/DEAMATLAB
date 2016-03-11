@@ -10,6 +10,8 @@ function [ out ] = deamalm( X, Y, varargin )
 %   - 'orient': orientation. Input oriented 'io', output oriented 'oo'.
 %   - 'names': DMU names.
 %   - 'fixbaset': previous year 0 (default), first year 1.
+%   - 'geomean': compute geometric mean for technological change. Default
+%   is 1.
 %
 %   Example
 %     
@@ -22,7 +24,7 @@ function [ out ] = deamalm( X, Y, varargin )
 %   http://www.deatoolbox.com
 %
 %   Version: 1.0
-%   LAST UPDATE: 1, March, 2016
+%   LAST UPDATE: 11, March, 2016
 %
 
     % Check size
@@ -90,11 +92,24 @@ function [ out ] = deamalm( X, Y, varargin )
 
         tevalt1_eff = temp_dea.eff;
         
+        % If geomean
+        if options.geomean
+            % Evaluate each DMU at t + 1, with the others at base period                         
+            temp_dea = dea(X(:,:,t + 1), Y(:,:,t + 1), varargin{:},...
+                    'Xeval', X(:,:, tb),...
+                    'Yeval', Y(:,:, tb));
+
+            t1evalt_eff = temp_dea.eff;    
+        else 
+            t1evalt_eff = NaN;
+        end
+        
         % Inverse efficiencies if 'oo'
         if strcmp(options.orient, 'oo')
             t_eff = 1 ./ t_eff;
             t1_eff = 1 ./ t1_eff;
             tevalt1_eff = 1 ./ tevalt1_eff;
+            t1evalt_eff = 1 ./ t1evalt_eff;
         end
 
         % Exitflag
@@ -104,13 +119,14 @@ function [ out ] = deamalm( X, Y, varargin )
         MTEC(:, t) = t1_eff ./ t_eff;
         
         % Technological Change
-        MTC(:, t) = tevalt1_eff ./ t1_eff;
+        if options.geomean
+            MTC(:, t) = ((tevalt1_eff ./ t1_eff) .* (t_eff ./ t1evalt_eff)).^(1/2);
+        else
+            MTC(:, t) = tevalt1_eff ./ t1_eff;
+        end
         
         % Malmquist index
-        M(:, t) = MTEC(:, t) .* MTC(:, t);
-        
-        
-        
+        M(:, t) = MTEC(:, t) .* MTC(:, t);               
         
     end
     

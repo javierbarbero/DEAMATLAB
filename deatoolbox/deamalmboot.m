@@ -12,6 +12,8 @@ function [ out ] = deamalmboot( X, Y, varargin )
 %   - 'fixbaset': previous year 0 (default), first year 1.
 %   - 'nreps': number of bootstrap replications. Default is 200.
 %   - 'alpha': alpha value for confidence intervals. Default is 0.05.
+%   - 'geomean': compute geometric mean for technological change. Default
+%   is 1.
 %
 %   Example
 %     
@@ -161,11 +163,29 @@ function [ out ] = deamalmboot( X, Y, varargin )
 
             tevalt1_eff = temp_dea.eff;
             
+            % If geomean
+            if options.geomean
+                % Evaluate each DMU at t + 1, with the others at base period                         
+                temp_dea = dea(Xpseudo2, Y(:,:,t + 1), varargin{:},...
+                        'Xeval',Xpseudo1,...
+                        'Yeval', Y(:,:, tb));
+
+                t1evalt_eff = temp_dea.eff;    
+            else 
+                t1evalt_eff = NaN;
+            end
+            
             % Technical Efficiency
             MTECB(:, i, t) = t1_eff ./ t_eff;
 
             % Technological Change
-            MTCB(:, i, t) = tevalt1_eff ./ t1_eff;
+            
+            % Technological Change
+            if options.geomean
+                MTCB(:, i, t) = ((tevalt1_eff ./ t1_eff) .* (t_eff ./ t1evalt_eff)).^(1/2);
+            else
+                MTCB(:, i, t) = tevalt1_eff ./ t1_eff;
+            end
 
             % Malmquist index
             MB(:, i, t) = MTECB(:, i, t) .* MTCB(:, i, t);

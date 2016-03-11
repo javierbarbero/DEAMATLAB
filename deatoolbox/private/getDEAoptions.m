@@ -33,6 +33,7 @@ function [ options ] = getDEAoptions( n, varargin )
     addPar(p, 'rhoY', [], @(x) isnumeric(x) );
     % Malmquist Index
     addPar(p, 'fixbaset', [], @(x) ismember(x, [0, 1]));
+    addPar(p, 'geomean', 1, @(x) ismember(x, [0, 1]));
     % Allocative Efficiency
     addPar(p, 'Xprice', [], @(x) isnumeric(x));
     addPar(p, 'Yprice', [], @(x) isnumeric(x));

@@ -10,6 +10,8 @@ function [ out ] = deamalmluen( X, Y, Yu, varargin )
 %   Additional properties:
 %   - 'names': DMU names.
 %   - 'fixbaset': previous year 0 (default), first year 1.
+%   - 'geomean': compute geometric mean for technological change. Default
+%   is 1.
 %
 %   Example
 %     
@@ -22,7 +24,7 @@ function [ out ] = deamalmluen( X, Y, Yu, varargin )
 %   http://www.deatoolbox.com
 %
 %   Version: 1.0
-%   LAST UPDATE: 1, March, 2016
+%   LAST UPDATE: 11, March, 2016
 %
 
     % Check size
@@ -101,6 +103,19 @@ function [ out ] = deamalmluen( X, Y, Yu, varargin )
                     'Yeval', Y(:,:, t + 1),...
                     'Yueval', Yu(:,:, t + 1));
         tevalt1_eff = temp_dea.eff;
+        
+        % If geomean
+        if options.geomean
+            % Evaluate each DMU at t + 1, with the others at base period                         
+            temp_dea = deaund(X(:,:,t + 1), Y(:,:,t + 1), Yu(:,:,t + 1), varargin{:},...
+                    'Xeval', X(:,:, tb),...
+                    'Yeval', Y(:,:, tb),...
+                    'Yueval', Yu(:, :, tb));
+
+            t1evalt_eff = temp_dea.eff;    
+        else 
+            t1evalt_eff = NaN;
+        end
 
         % Exitflag
         Eflag(:, (2*t - 1):(2*t)) = temp_dea.exitflag;
@@ -109,7 +124,13 @@ function [ out ] = deamalmluen( X, Y, Yu, varargin )
         MLTEC(:, t) = (1 + t_eff) ./ (1 + t1_eff);
         
         % Technological Change
-        MLTC(:, t) = (1 + t1_eff) ./ (1 + tevalt1_eff);
+        
+        % Technological Change
+        if options.geomean
+            MLTC(:, t) = (( (1 + t1_eff) ./ (1 + tevalt1_eff) ) .* ((1 + t1evalt_eff) ./ (1 + t_eff) )).^(1/2);
+        else
+            MLTC(:, t) = (1 + t1_eff) ./ (1 + tevalt1_eff);
+        end
         
         % Malmquist index
         ML(:, t) = MLTEC(:, t) .* MLTC(:, t);
