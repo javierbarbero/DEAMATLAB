@@ -133,9 +133,21 @@ deadisp(ml);
 %% Section 8: Bootstrapping DEA estimators
 
 load 'deadataFLS'
+rng(1234567); % Set seed for reproducibility
 
 io_b = deaboot(X, Y, 'orient', 'io', 'nreps', 200, 'alpha', 0.05);
 deadisp(io_b);
+
+% Malmquist bootstrap
+X = [2; 3; 5; 4; 4];
+X(:, :, 2) = [1; 2; 4; 3; 4];
+
+Y = [1; 4; 6; 3; 5];
+Y(:, :, 2) = [1; 4; 6; 3; 3];
+
+rng(1234567); % Set seed for reproducibility
+malmquist = deamalmboot(X, Y, 'orient', 'io', 'nreps', 200, 'alpha', 0.05);
+deadisp(malmquist)
 
 %% Section 9: Advanced options, displaying and exporting results
 

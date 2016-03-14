@@ -161,10 +161,10 @@ function [ name, format ] = getDEAformat( fieldname, orient )
             name = 'Mboot';
             format = fmtNumber;
         case 'eff.M.cL'
-            name = 'McL';
+            name = 'McLow';
             format = fmtNumber;
         case 'eff.M.cU'
-            name = 'McU';
+            name = 'McUpp';
             format = fmtNumber;
         case 'eff.MTEC.o'
             name = 'MTEC';
@@ -173,10 +173,10 @@ function [ name, format ] = getDEAformat( fieldname, orient )
             name = 'MTECboot';
             format = fmtNumber;
         case 'eff.MTEC.cL'
-            name = 'MTECcL';
+            name = 'MTECcLow';
             format = fmtNumber;
         case 'eff.MTEC.cU'
-            name = 'MTECcU';
+            name = 'MTECcUpp';
             format = fmtNumber;
         case 'eff.MTC.o'
             name = 'MTC';
@@ -185,10 +185,10 @@ function [ name, format ] = getDEAformat( fieldname, orient )
             name = 'MTCboot';
             format = fmtNumber;
         case 'eff.MTC.cL'
-            name = 'MTCcL';
+            name = 'MTCcLow';
             format = fmtNumber;
         case 'eff.MTC.cU'
-            name = 'MTCcU';
+            name = 'MTCcUpp';
             format = fmtNumber;
         otherwise
             error('Field %s not found', fieldname)
