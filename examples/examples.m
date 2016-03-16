@@ -4,7 +4,7 @@
 %   http://www.deatoolbox.com
 %
 %   Version: 1.0
-%   LAST UPDATE: 10, March, 2016
+%   LAST UPDATE: 16, March, 2016
 %
 
 % Clear and clc
@@ -103,7 +103,11 @@ deadisp(revenue);
 
 % 5.3 Overall profit efficiency
 profit = deaalloc(X, Y, 'Xprice', W, 'Yprice', P);
-deadisp(profit);
+deadisp(profit, 'names/X/Y/eff.T/eff.A/eff.P');
+
+% 5.4 Profit efficiency: the weighted additive approach
+addprofit = deaadditprofit(X, Y, 'rts', 'vrs', 'Xprice', W, 'Yprice', P);
+deadisp(addprofit, 'names/X/Y/eff.T/eff.A/eff.P');
 
 %% Section 6: Undesirable outputs
 
@@ -137,6 +141,10 @@ rng(1234567); % Set seed for reproducibility
 
 io_b = deaboot(X, Y, 'orient', 'io', 'nreps', 200, 'alpha', 0.05);
 deadisp(io_b);
+
+% Test of RTS
+rng(1234567); % Set seed for reproducibility
+deatestrts(X, Y, 'orient', 'io', 'nreps', 200, 'alpha', 0.05, 'disp', 1);
 
 % Malmquist bootstrap
 X = [2; 3; 5; 4; 4];

@@ -27,7 +27,7 @@ function [ out ] = deaboot(  X, Y, varargin )
 %   http://www.deatoolbox.com
 %
 %   Version: 1.0
-%   LAST UPDATE: 11, March, 2016
+%   LAST UPDATE: 16, March, 2016
 %
 
     % Check size
@@ -68,8 +68,13 @@ function [ out ] = deaboot(  X, Y, varargin )
     end   
     
     % Original efficiency estimates
-    efforig = dea(X, Y, varargin{:});
-    efforig = efforig.eff;
+    if isempty(options.effRef)
+        efforig = dea(X, Y, varargin{:});
+        efforig = efforig.eff;
+    else
+        % Use reference efficiencies (when computing the RTS test)
+        efforig = options.effRef;        
+    end
 
     % Invert efficiencies if 'io'
     if strcmp(orient, 'io')

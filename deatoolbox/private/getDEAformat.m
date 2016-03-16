@@ -1,37 +1,12 @@
 function [ name, format ] = getDEAformat( fieldname, orient )
 %GETDEAFORMAT Private function
-%   Computes data envelopment analysis radial and directional model
-%
-%   out = DEA(X, Y, Name, Value) computes data envelopment analysis model
-%   with inputs X and outputs Y. Model properties are specified using 
-%   one or more Name ,Value pair arguments.
-%
-%   Additional properties:
-%   - 'orient': orientation. Input oriented 'io', output oriented 'oo', 
-%   directional distane function 'ddf'.
-%   - 'rts': returns to sacle. Constant returns to scale 'crs', variable
-%   returns to sacle 'vrs'.
-%   - 'Gx': input directions for 'ddf' orientation. Default is X.
-%   - 'Gy': output directions for 'ddf' orientation. Default is Y.
-%   - 'names': DMU names.
-%
-%   Advanced parameters:
-%   - 'Xeval: inputs to evaluate if different from X.
-%   - 'Yeval': outputs to evaluate if different from Y.
-%
-%   Example
-%     
-%      io = dea(X, Y, 'orient', 'io');
-%      oo_vrs = dea(X, Y, 'orient', 'oo', 'rts', 'vrs');
-%      ddf = dea(X, Y, 'ddf', 'Gx', X, 'Gy', Y);
-%
-%   See also DEAOUT, DEASCALE, DEAMALM, DEAADDIT, DEASUPER
+%   Private function
 %
 %   Copyright 2016 Inmaculada C. Álvarez, Javier Barbero, José L. Zofío
 %   http://www.deatoolbox.com
 %
 %   Version: 1.0
-%   LAST UPDATE: 11, March, 2016
+%   LAST UPDATE: 16, March, 2016
 %
 
     if nargin < 2

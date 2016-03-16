@@ -1,6 +1,13 @@
 function [ options ] = getDEAoptions( n, varargin )
-%UNTITLED Summary of this function goes here
-%   Detailed explanation goes here
+%GETDEAOPTIONS Private function
+%   Private function
+%
+%   Copyright 2016 Inmaculada C. Álvarez, Javier Barbero, José L. Zofío
+%   http://www.deatoolbox.com
+%
+%   Version: 1.0
+%   LAST UPDATE: 16, March, 2016
+%
     
     % Default optimization-options
     optimoptsdef = optimoptions('linprog','display','off', 'Algorithm','dual-simplex');
@@ -17,6 +24,7 @@ function [ options ] = getDEAoptions( n, varargin )
     addPar(p,'names', cellstr(int2str((1:n)')),...
                 @(x) iscellstr(x) && (length(x) == n) );
     addPar(p, 'optimopts', optimoptsdef, @(x) isstruct(x));
+    addPar(p, 'disp', 0, @(x) ismember(x, [0, 1]) );
     % Radial models
     addPar(p,'orient','none',...
                 @(x) any(validatestring(x,{'io','oo','ddf','none'})));
@@ -42,6 +50,7 @@ function [ options ] = getDEAoptions( n, varargin )
     % Bootstrap
     addPar(p, 'nreps', 200, @(x) isnumeric(x) & (x > 0) );
     addPar(p, 'alpha', 0.05, @(x) isnumeric(x) & (x > 0));
+    addPar(p, 'effRef', [], @(x) isnumeric(x));
     
     p.parse(varargin{:})
     options = p.Results;
