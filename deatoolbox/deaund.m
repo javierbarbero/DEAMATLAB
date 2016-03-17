@@ -8,6 +8,10 @@ function [ out ] = deaund( X, Y, Yu, varargin)
 %
 %   Additional properties:
 %   - 'names': DMU names.
+%   - 'orient': orientation. Directional distane function with undesirable
+%   outputs 'ddf' (Aparicio, Pastor and Zofio, 2013), default. Directional 
+%   distance function with undesirable outputs 'ddf_ccf' (Chung, Fare and 
+%   Grosskopf).
 %
 %   Advanced parameters:
 %   - 'Xeval: inputs to evaluate if different from X.
@@ -23,7 +27,7 @@ function [ out ] = deaund( X, Y, Yu, varargin)
 %   http://www.deatoolbox.com
 %
 %   Version: 1.0
-%   LAST UPDATE: 1, March, 2016
+%   LAST UPDATE: 17, March, 2016
 %
 
     % Check size
@@ -51,6 +55,8 @@ function [ out ] = deaund( X, Y, Yu, varargin)
             orient = 'ddf';
         case {'ddf'}
             orient = 'ddf';
+        case {'ddf_ccf'}
+            orient = 'ddf_ccf';
         otherwise
             error('Orientation for the undesarible outputs model must be ddf');
     end 
@@ -137,6 +143,7 @@ function [ out ] = deaund( X, Y, Yu, varargin)
     switch(orient)
         
         case 'ddf'
+            % (Aparicio, Pastor and Zofio, 2013)
                         
             % Get directions
             %G = options.ddfG;
@@ -207,8 +214,6 @@ function [ out ] = deaund( X, Y, Yu, varargin)
                 Aeq = [ X', eye(m,m)  ,  zeros(m,s), zeros(m,r) ;
                         Y', zeros(s,m), -eye(s,s)  , zeros(s,r) ;     
                        Yu', zeros(r,m),  zeros(r,s), eye(r,r);
-                       %Yuref', zeros(r,m), zeros(r,s), eye(r,r);
-                       %zeros(1,n), zeros(1,m), zeros(1,s), -eye(r,r);
                        AeqRTS2];
                 beq = [-beta .* Gx(j,:)' + Xeval(j,:)'
                         beta .* Gy(j,:)' + Yeval(j,:)';
@@ -242,7 +247,72 @@ function [ out ] = deaund( X, Y, Yu, varargin)
                 
             end
             
+        case 'ddf_ccf'
             
+            % (Chung, Fare and Grosskopf)
+            
+            Gx = zeros(n,m);
+            Gy = Yeval;
+            Gyu = Yueval;
+                        
+            if length(Gx) == 1
+                Gx = repmat(Gx, size(X,1), size(X,2));
+            end
+            
+            if length(Gy) == 1
+                Gy = repmat(Gy, size(Y,1), size(Y,2));
+            end
+            
+            if length(Gyu) == 1
+                Gyu = repmat(Gyu, size(Y,1), size(Y,2));
+            end
+            
+            % For each DMU
+            for j=1:neval
+                % FIRST STEP:
+                % Objective function (maximize)
+                f = -[zeros(1,n), 1];
+
+                % Constraints                
+                A = [ X', zeros(m,1);
+                     -Y', Yeval(j,:)'];
+                b = [Xeval(j,:)'; -Yeval(j,:)'; ];
+                
+                Aeq = [Yu', Yueval(j,:)'];
+                beq = [Yueval(j,:)'];
+ 
+                lb = [zeros(1, n), -inf];
+
+                % Optimize
+                [z, ~, exitflag] = linprog(f, A, b, Aeq, beq, lb, [], [], optimopts);                
+                if exitflag ~= 1
+                    warning('DMU %i. First Step. Optimization exit flag: %i', j, exitflag)
+                end
+                if isempty(z)
+                    warning('DMU %i. First Step. Optimization doesn''t return a result in First Step. Efficiency set to 0.', j)
+                    z = zeros(n + 1, 1);                    
+                end                
+
+                % Get efficiency
+                beta = z(end);
+                eff(j) = beta;
+                Eflag(j, 1) = exitflag;
+                
+                % SECOND STEP
+                % Not available
+                lambda(j,:) = z(1:n);
+                slackX(j,:) = nan(1, m);
+                slackY(j,:) = nan(1, s);   
+                slackYu(j,:) = nan(1, r);
+                eff(j) = beta;
+                Eflag(j, 2) = nan(1, 1);
+                
+                % Compute efficient inputs and outputs
+                Xeff(j,:) = nan(1, m);
+                Yeff(j,:) = nan(1, s);
+                Yueff(j,:) = nan(1, r);
+                
+            end
             
             
     end

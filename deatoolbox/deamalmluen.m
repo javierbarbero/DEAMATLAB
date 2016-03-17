@@ -9,6 +9,10 @@ function [ out ] = deamalmluen( X, Y, Yu, varargin )
 %
 %   Additional properties:
 %   - 'names': DMU names.
+%   - 'orient': orientation. Directional distane function with undesirable
+%   outputs 'ddf' (Aparicio, Pastor and Zofio, 2013), default. Directional 
+%   distance function with undesirable outputs 'ddf_ccf' (Chung, Fare and 
+%   Grosskopf).
 %   - 'fixbaset': previous year 0 (default), first year 1.
 %   - 'geomean': compute geometric mean for technological change. Default
 %   is 1.
@@ -24,7 +28,7 @@ function [ out ] = deamalmluen( X, Y, Yu, varargin )
 %   http://www.deatoolbox.com
 %
 %   Version: 1.0
-%   LAST UPDATE: 11, March, 2016
+%   LAST UPDATE: 17, March, 2016
 %
 
     % Check size
@@ -70,8 +74,8 @@ function [ out ] = deamalmluen( X, Y, Yu, varargin )
     end        
     
     % Check orientation
-    if ~strcmp(orient, 'ddf')
-        error('Malmquist-Luenberger index is for ''ddf'' with undesirable outputs')
+    if ~strcmp(orient, 'ddf') && ~strcmp(orient, 'ddf_ccf')
+        error('Malmquist-Luenberger index is for ''ddf'' or ''ddf_ccf'' with undesirable outputs')
     end
     
     % Create matrices to store results

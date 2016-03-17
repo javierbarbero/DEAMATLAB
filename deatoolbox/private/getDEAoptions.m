@@ -6,7 +6,7 @@ function [ options ] = getDEAoptions( n, varargin )
 %   http://www.deatoolbox.com
 %
 %   Version: 1.0
-%   LAST UPDATE: 16, March, 2016
+%   LAST UPDATE: 17, March, 2016
 %
     
     % Default optimization-options
@@ -23,11 +23,11 @@ function [ options ] = getDEAoptions( n, varargin )
     % Generic options
     addPar(p,'names', cellstr(int2str((1:n)')),...
                 @(x) iscellstr(x) && (length(x) == n) );
-    addPar(p, 'optimopts', optimoptsdef, @(x) isstruct(x));
+    addPar(p, 'optimopts', optimoptsdef, @(x) ~isempty(x));
     addPar(p, 'disp', 0, @(x) ismember(x, [0, 1]) );
     % Radial models
     addPar(p,'orient','none',...
-                @(x) any(validatestring(x,{'io','oo','ddf','none'})));
+                @(x) any(validatestring(x,{'io','oo','ddf','none','ddf_ccf'})));
     addPar(p,'rts','crs',...
                 @(x) any(validatestring(x, {'crs','vrs'})));
     addPar(p, 'Gx', [], @(x) isnumeric(x) );
