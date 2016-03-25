@@ -28,7 +28,7 @@ function [ out ] = deamalmluen( X, Y, Yu, varargin )
 %   http://www.deatoolbox.com
 %
 %   Version: 1.0
-%   LAST UPDATE: 17, March, 2016
+%   LAST UPDATE: 25, March, 2016
 %
 
     % Check size
@@ -82,7 +82,11 @@ function [ out ] = deamalmluen( X, Y, Yu, varargin )
     ML = nan(n, T - 1);
     MLTEC = nan(n, T - 1);
     MLTC = nan(n, T - 1);
-    Eflag = nan(n, (T - 1) * 2); % Only for T and T + 1
+    if options.geomean
+        Eflag = nan(n, (T - 1) * 4);
+    else
+        Eflag = nan(n, (T - 1) * 3);
+    end
     
     % For each time period
     for t=1:T-1
@@ -94,19 +98,22 @@ function [ out ] = deamalmluen( X, Y, Yu, varargin )
         end
         
         % Compute efficiency at base period
-        temp_dea = deaund(X(:,:,tb), Y(:,:,tb), Yu(:,:,tb), varargin{:} );
+        temp_dea = deaund(X(:,:,tb), Y(:,:,tb), Yu(:,:,tb), varargin{:}, 'secondstep', 0);
         t_eff = temp_dea.eff;
+        Eflag(:, (2*t - 1)) = temp_dea.exitflag(:, 1);
         
         % Compute efficiency at time t + 1
-        temp_dea = deaund(X(:,:,t + 1), Y(:,:,t + 1), Yu(:,:,t + 1), varargin{:} );
+        temp_dea = deaund(X(:,:,t + 1), Y(:,:,t + 1), Yu(:,:,t + 1), varargin{:}, 'secondstep', 0 );
         t1_eff = temp_dea.eff;
+        Eflag(:, (2*t - 1) + 1) = temp_dea.exitflag(:, 1);
                
         % Evaluate each DMU at t + 1, with the others at base period
         temp_dea = deaund(X(:,:,tb), Y(:,:,tb), Yu(:,:,tb), varargin{:},...
                     'Xeval', X(:,:, t + 1),...
                     'Yeval', Y(:,:, t + 1),...
-                    'Yueval', Yu(:,:, t + 1));
+                    'Yueval', Yu(:,:, t + 1), 'secondstep', 0);
         tevalt1_eff = temp_dea.eff;
+        Eflag(:, (2*t - 1) + 2) = temp_dea.exitflag(:, 1);
         
         % If geomean
         if options.geomean
@@ -114,15 +121,13 @@ function [ out ] = deamalmluen( X, Y, Yu, varargin )
             temp_dea = deaund(X(:,:,t + 1), Y(:,:,t + 1), Yu(:,:,t + 1), varargin{:},...
                     'Xeval', X(:,:, tb),...
                     'Yeval', Y(:,:, tb),...
-                    'Yueval', Yu(:, :, tb));
+                    'Yueval', Yu(:, :, tb), 'secondstep', 0);
 
-            t1evalt_eff = temp_dea.eff;    
+            t1evalt_eff = temp_dea.eff;   
+            Eflag(:, (2*t - 1) + 3) = temp_dea.exitflag(:, 1);
         else 
             t1evalt_eff = NaN;
         end
-
-        % Exitflag
-        Eflag(:, (2*t - 1):(2*t)) = temp_dea.exitflag;
         
         % Technical Efficiency
         MLTEC(:, t) = (1 + t_eff) ./ (1 + t1_eff);

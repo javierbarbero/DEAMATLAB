@@ -32,7 +32,7 @@ function [ out ] = dea( X, Y, varargin)
 %   http://www.deatoolbox.com
 %
 %   Version: 1.0
-%   LAST UPDATE: 9, March, 2016
+%   LAST UPDATE: 25, March, 2016
 %
 
     % Check size
@@ -175,7 +175,7 @@ function [ out ] = dea( X, Y, varargin)
                     end
                     if isempty(z)
                         warning('DMU %i. Second Step. Optimization doesn''t return a result. Results set to NaN.', j)
-                        z = nan(n + m + s + r, 1);                   
+                        z = nan(n + m + s, 1);                   
                     end
 
                     % Get results
@@ -254,7 +254,7 @@ function [ out ] = dea( X, Y, varargin)
                     end
                     if isempty(z)
                         warning('DMU %i. Second Step. Optimization doesn''t return a result. Results set to NaN.', j)
-                        z = nan(n + m + s + r, 1);                   
+                        z = nan(n + m + s, 1);                   
                     end
 
                     % Get results
@@ -355,7 +355,7 @@ function [ out ] = dea( X, Y, varargin)
                     end
                     if isempty(z)
                         warning('DMU %i. Second Step. Optimization doesn''t return a result. Results set to NaN.', j)
-                        z = nan(n + m + s + r, 1);                   
+                        z = nan(n + m + s, 1);                   
                     end
 
                     % Get results
