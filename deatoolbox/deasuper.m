@@ -26,7 +26,7 @@ function [ out ] = deasuper( X, Y, varargin )
 %   http://www.deatoolbox.com
 %
 %   Version: 1.0
-%   LAST UPDATE: 9, March, 2016
+%   LAST UPDATE: 8, April, 2016
 %
 
     % Check size
@@ -73,6 +73,15 @@ function [ out ] = deasuper( X, Y, varargin )
         if length(Gy) == 1
             Gy = repmat(Gy, size(Y,1), size(Y,2));
         end
+        
+        if isempty(Gx)
+            Gx = X;
+        end
+
+        if isempty(Gy)
+            Gy = Y;
+        end
+        
     end
     
     % Create variable to store results
