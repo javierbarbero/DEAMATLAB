@@ -27,7 +27,7 @@ function [ out ] = deaund( X, Y, Yu, varargin)
 %   http://www.deatoolbox.com
 %
 %   Version: 1.0
-%   LAST UPDATE: 25, March, 2016
+%   LAST UPDATE: 8, April, 2016
 %
 
     % Check size
@@ -196,8 +196,8 @@ function [ out ] = deaund( X, Y, Yu, varargin)
                     warning('DMU %i. First Step. Optimization exit flag: %i', j, exitflag)
                 end
                 if isempty(z)
-                    warning('DMU %i. First Step. Optimization doesn''t return a result in First Step. Efficiency set to 0.', j)
-                    z = zeros(n + 1, 1);                    
+                    warning('DMU %i. First Step. Optimization doesn''t return a result in First Step. Efficiency set to NaN.', j) 
+                    z = nan(n + 1, 1);   
                 end
                 
                 % Get efficiency
@@ -276,8 +276,8 @@ function [ out ] = deaund( X, Y, Yu, varargin)
                     warning('DMU %i. First Step. Optimization exit flag: %i', j, exitflag)
                 end
                 if isempty(z)
-                    warning('DMU %i. First Step. Optimization doesn''t return a result in First Step. Efficiency set to 0.', j)
-                    z = zeros(n + 1, 1);                    
+                    warning('DMU %i. First Step. Optimization doesn''t return a result in First Step. Efficiency set to NaN.', j)
+                    z = nan(n + 1, 1);                    
                 end                
 
                 % Get efficiency

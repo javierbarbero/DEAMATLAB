@@ -9,8 +9,8 @@ function [ out ] = dea( X, Y, varargin)
 %   Additional properties:
 %   - 'orient': orientation. Input oriented 'io', output oriented 'oo', 
 %   directional distane function 'ddf'.
-%   - 'rts': returns to sacle. Constant returns to scale 'crs', variable
-%   returns to sacle 'vrs'.
+%   - 'rts': returns to scale. Constant returns to scale 'crs', variable
+%   returns to scale 'vrs'.
 %   - 'Gx': input directions for 'ddf' orientation. Default is X.
 %   - 'Gy': output directions for 'ddf' orientation. Default is Y.
 %   - 'names': DMU names.
@@ -32,7 +32,7 @@ function [ out ] = dea( X, Y, varargin)
 %   http://www.deatoolbox.com
 %
 %   Version: 1.0
-%   LAST UPDATE: 25, March, 2016
+%   LAST UPDATE: 8, April, 2016
 %
 
     % Check size
@@ -144,8 +144,8 @@ function [ out ] = dea( X, Y, varargin)
                     warning('DMU %i. First Step. Optimization exit flag: %i', j, exitflag)
                 end
                 if isempty(z)
-                    warning('DMU %i. First Step. Optimization doesn''t return a result. Efficiency set to 1.', j)
-                    z = ones(n + 1, 1);                    
+                    warning('DMU %i. First Step. Optimization doesn''t return a result. Efficiency set to NaN.', j)
+                    z = nan(n + 1, 1);                    
                 end
                 
                 % Get efficiency
@@ -154,7 +154,7 @@ function [ out ] = dea( X, Y, varargin)
                 
                 % SECOND STEP
                 
-                if(options.secondstep)
+                if(options.secondstep) && ~isnan(theta)
                 
                     % Objective function
                     f = [zeros(1, n), -ones(1, m + s)];
@@ -223,8 +223,8 @@ function [ out ] = dea( X, Y, varargin)
                     warning('DMU %i. First Step. Optimization exit flag: %i', j, exitflag)
                 end
                 if isempty(z)
-                    warning('DMU %i. First Step. Optimization doesn''t return a result. Efficiency set to 1.', j)
-                    z = ones(n + 1, 1);                    
+                    warning('DMU %i. First Step. Optimization doesn''t return a result. Efficiency set to NaN.', j)
+                    z = nan(n + 1, 1);                    
                 end
                 
                 % Get efficiency
@@ -233,7 +233,7 @@ function [ out ] = dea( X, Y, varargin)
                 
                 % SECOND STEP
                 
-                if(options.secondstep)
+                if(options.secondstep)  && ~isnan(phi)
                                  
                     % Objective function
                     f = -[zeros(1, n), ones(1, m + s)];
@@ -324,8 +324,8 @@ function [ out ] = dea( X, Y, varargin)
                     warning('DMU %i. First Step. Optimization exit flag: %i', j, exitflag)
                 end
                 if isempty(z)
-                    warning('DMU %i. First Step. Optimization doesn''t return a result. Efficiency set to 1.', j)
-                    z = ones(n + 1, 1);                    
+                    warning('DMU %i. First Step. Optimization doesn''t return a result. Efficiency set to NaN.', j)
+                    z = nan(n + 1, 1);                    
                 end
                 
                 % Get efficiency
@@ -334,7 +334,7 @@ function [ out ] = dea( X, Y, varargin)
                 
                 % SECOND STEP
                 
-                if(options.secondstep)
+                if(options.secondstep) && ~isnan(beta)
                                  
                     % Objective function
                     f = -[zeros(1, n), ones(1, m + s)];
