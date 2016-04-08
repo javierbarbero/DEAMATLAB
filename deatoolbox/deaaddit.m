@@ -5,12 +5,12 @@ function [ out ] = deaaddit( X, Y, varargin )
 %   out = DEAADDIT(X, Y, Name, Value) computes data envelopment analysis
 %   weighted additive model with inputs X and outputs Y. Model properties 
 %   are specified using one or more Name ,Value pair arguments. If weights
-%   'rhoX' and 'rhoY' are not specified, the standard additive program is
-%   computed.
+%   'rhoX' and 'rhoY' are not specified, the Measure of Inefficiency 
+%   Proportions (MIP) program is computed.
 %
 %   Additional properties:
-%   - 'rts': returns to sacle. Constant returns to scale 'crs', variable
-%   returns to sacle 'vrs'.
+%   - 'rts': returns to scale. Constant returns to scale 'crs', variable
+%   returns to scale 'vrs'.
 %   - 'rhoX': input slacks weights. Default is MIP: 1 ./ X.
 %   - 'rhoY': output slacks weights. Default is MIP: 1 ./ Y.
 %   - 'names': DMU names.
