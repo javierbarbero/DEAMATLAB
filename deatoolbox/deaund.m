@@ -206,7 +206,7 @@ function [ out ] = deaund( X, Y, Yu, varargin)
                 Eflag(j, 1) = exitflag;
                 
                 % SECOND STEP                
-                if(options.secondstep)
+                if(options.secondstep) && ~isnan(beta)
 
                     % Objective function
                     f = -[zeros(1, n), ones(1, m + s + r)];
@@ -238,15 +238,12 @@ function [ out ] = deaund( X, Y, Yu, varargin)
                     slackX(j,:) = z(n + 1 : n + m);
                     slackY(j,:) = z(n + m + 1 : n + m + s);   
                     slackYu(j,:) = z(n + m + s + 1 : n + m + s + r);
-                    eff(j) = beta;
                     Eflag(j, 2) = exitflag;
 
                     % Compute efficient inputs and outputs
                     Xeff(j,:) = Xeval(j,:) - repmat(eff(j), 1, m) .* Gx(j,:) - slackX(j,:);
                     Yeff(j,:) = Yeval(j,:) + repmat(eff(j), 1, s) .* Gy(j,:) + slackY(j,:);
                     Yueff(j,:) = Yueval(j,:) - repmat(eff(j), 1, r) .* Gyu(j,:) - slackYu(j,:);
-                else
-                    eff(j) = beta;
                 end
                 
             end
