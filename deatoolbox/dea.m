@@ -342,6 +342,7 @@ function [ out ] = dea( X, Y, varargin)
                     end
                 end
                 if isempty(z)
+                    if options.warning
                         warning('DMU %i. First Step. Optimization doesn''t return a result. Efficiency set to NaN.', j)
                     end
                     z = nan(n + 1, 1);                    
