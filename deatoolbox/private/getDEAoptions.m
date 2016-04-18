@@ -6,11 +6,11 @@ function [ options ] = getDEAoptions( n, varargin )
 %   http://www.deatoolbox.com
 %
 %   Version: 1.0
-%   LAST UPDATE: 25, March, 2016
+%   LAST UPDATE: 18, April, 2016
 %
     
     % Default optimization-options
-    optimoptsdef = optimoptions('linprog','display','off', 'Algorithm','dual-simplex', 'TolFun', 1e-10, 'TolCon', 1e-9);
+    optimoptsdef = optimoptions('linprog','display','off', 'Algorithm','dual-simplex', 'TolFun', 1e-10, 'TolCon', 1e-7);
 
     % Parse Options
     p = inputParser;
