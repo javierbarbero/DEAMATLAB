@@ -29,7 +29,7 @@ function [ out ] = deaaddit( X, Y, varargin )
 %   http://www.deatoolbox.com
 %
 %   Version: 1.0
-%   LAST UPDATE: 10, March, 2016
+%   LAST UPDATE: 18, April, 2016
 %
 
     % Check size
@@ -144,10 +144,14 @@ function [ out ] = deaaddit( X, Y, varargin )
         beq = [Xeval(j,:)'; Yeval(j,:)'; beqRTS2];
         [z, ~, exitflag] = linprog(f, [], [], Aeq, beq, lb, [], [], optimopts);
         if exitflag ~= 1
-            warning('Optimization exit flag: %i', exitflag)
+            if options.warning
+                warning('Optimization exit flag: %i', exitflag)
+            end
         end
         if isempty(z)
-            warning('Optimization doesn''t return a result. Results set to NaN.')
+            if options.warning
+                warning('Optimization doesn''t return a result. Results set to NaN.')
+            end
             z = nan(n + m + s, 1);                  
         end
         Z(j,:) = z;

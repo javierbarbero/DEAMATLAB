@@ -27,7 +27,7 @@ function [ out ] = deaund( X, Y, Yu, varargin)
 %   http://www.deatoolbox.com
 %
 %   Version: 1.0
-%   LAST UPDATE: 8, April, 2016
+%   LAST UPDATE: 18, April, 2016
 %
 
     % Check size
@@ -193,10 +193,14 @@ function [ out ] = deaund( X, Y, Yu, varargin)
                 % Optimize
                 [z, ~, exitflag] = linprog(f, A, b, Aeq, beq, lb, [], [], optimopts);                
                 if exitflag ~= 1
-                    warning('DMU %i. First Step. Optimization exit flag: %i', j, exitflag)
+                    if options.warning
+                        warning('DMU %i. First Step. Optimization exit flag: %i', j, exitflag)
+                    end
                 end
                 if isempty(z)
-                    warning('DMU %i. First Step. Optimization doesn''t return a result in First Step. Efficiency set to NaN.', j) 
+                    if options.warning
+                        warning('DMU %i. First Step. Optimization doesn''t return a result in First Step. Efficiency set to NaN.', j) 
+                    end
                     z = nan(n + 1, 1);   
                 end
                 
@@ -226,10 +230,14 @@ function [ out ] = deaund( X, Y, Yu, varargin)
                     % Optimize
                     z = linprog(f, [], [], Aeq, beq, lb, [], [], optimopts);
                     if exitflag ~= 1
-                        warning('DMU %i. Second Step. Optimization exit flag: %i', j, exitflag)
+                        if options.warning
+                            warning('DMU %i. Second Step. Optimization exit flag: %i', j, exitflag)
+                        end
                     end
                     if isempty(z)
-                        warning('DMU %i. Second Step. Optimization doesn''t return a result. Results set to NaN.', j)
+                        if options.warning
+                            warning('DMU %i. Second Step. Optimization doesn''t return a result. Results set to NaN.', j)
+                        end
                         z = nan(n + m + s + r, 1);                   
                     end
 
@@ -270,10 +278,14 @@ function [ out ] = deaund( X, Y, Yu, varargin)
                 % Optimize
                 [z, ~, exitflag] = linprog(f, A, b, Aeq, beq, lb, [], [], optimopts);                
                 if exitflag ~= 1
-                    warning('DMU %i. First Step. Optimization exit flag: %i', j, exitflag)
+                    if options.warning
+                        warning('DMU %i. First Step. Optimization exit flag: %i', j, exitflag)
+                    end
                 end
                 if isempty(z)
-                    warning('DMU %i. First Step. Optimization doesn''t return a result in First Step. Efficiency set to NaN.', j)
+                    if options.warning
+                        warning('DMU %i. First Step. Optimization doesn''t return a result in First Step. Efficiency set to NaN.', j)
+                    end
                     z = nan(n + 1, 1);                    
                 end                
 

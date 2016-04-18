@@ -23,7 +23,7 @@ function [ out ] = deaadditsuper( X, Y, varargin )
 %   http://www.deatoolbox.com
 %
 %   Version: 1.0
-%   LAST UPDATE: 10, March, 2016
+%   LAST UPDATE: 18, March, 2016
 %
 
     % Check size
@@ -130,11 +130,14 @@ function [ out ] = deaadditsuper( X, Y, varargin )
             bsuper = [X(j,:)'; -Y(j,:)'];
             [zsuper, ~, exitflag] = linprog(fsuper, Asuper, bsuper, AeqRTS2super, beqRTS2super, lbsuper, [], [], optimopts);
             if exitflag ~= 1
-                disp(j)
-                warning('Optimization exit flag: %i', exitflag)
+                if options.warning
+                    warning('Optimization exit flag: %i', exitflag)
+                end
             end
             if isempty(zsuper)
-                warning('Optimization doesn''t return a result. Results set to NaN.')
+                if options.warning
+                    warning('Optimization doesn''t return a result. Results set to NaN.')
+                end
                 zsuper = nan(n + m + s - 1, 1);                  
             end
             

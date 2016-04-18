@@ -52,6 +52,9 @@ function [ options ] = getDEAoptions( n, varargin )
     addPar(p, 'alpha', 0.05, @(x) isnumeric(x) & (x > 0));
     addPar(p, 'effRef', [], @(x) isnumeric(x));
     
+    % Supress warnings
+    addPar(p, 'warning', 1,  @(x) ismember(x, [0, 1]));
+    
     p.parse(varargin{:})
     options = p.Results;
     
