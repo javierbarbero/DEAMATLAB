@@ -155,6 +155,7 @@ function [ out ] = dea( X, Y, varargin)
                 % Get efficiency
                 theta = z(end);
                 Eflag(j, 1) = exitflag;
+                eff(j) = theta;
                 
                 % SECOND STEP
                 
@@ -190,14 +191,12 @@ function [ out ] = dea( X, Y, varargin)
                     lambda(j,:) = z(1:n);
                     slackX(j,:) = z(n + 1 : n + m);
                     slackY(j,:) = z(n + m + 1 : n + m + s);                
-                    eff(j) = theta;
                     Eflag(j, 2) = exitflag;
 
                     % Compute efficient inputs and outputs
                     Xeff(j,:) = repmat(eff(j), 1, m) .* Xeval(j,:) - slackX(j,:);
                     Yeff(j,:) = Yeval(j,:) + slackY(j,:);
-                else
-                    eff(j) = theta;
+
                 end
                 
             end
@@ -241,6 +240,7 @@ function [ out ] = dea( X, Y, varargin)
                 
                 % Get efficiency
                 phi = z(end);
+                eff(j) = phi;
                 Eflag(j, 1) = exitflag;
                 
                 % SECOND STEP
@@ -277,15 +277,12 @@ function [ out ] = dea( X, Y, varargin)
                     lambda(j,:) = z(1:n);
                     slackX(j,:) = z(n + 1 : n + m);
                     slackY(j,:) = z(n + m + 1 : n + m + s);                
-                    eff(j) = phi;
                     Eflag(j, 2) = exitflag;
 
                     % Compute efficient inputs and outputs
                     Xeff(j,:) = Xeval(j,:) - slackX(j,:);
                     Yeff(j,:) = repmat(eff(j), 1, s) .* Yeval(j,:) + slackY(j,:);
-                
-                else
-                    eff(j) = phi;
+
                 end
                     
             end
@@ -350,6 +347,7 @@ function [ out ] = dea( X, Y, varargin)
                 
                 % Get efficiency
                 beta = z(end);
+                eff(j) = beta;
                 Eflag(j, 1) = exitflag;
                 
                 % SECOND STEP
@@ -386,15 +384,11 @@ function [ out ] = dea( X, Y, varargin)
                     lambda(j,:) = z(1:n);
                     slackX(j,:) = z(n + 1 : n + m);
                     slackY(j,:) = z(n + m + 1 : n + m + s);                
-                    eff(j) = beta;
                     Eflag(j, 2) = exitflag;
 
                     % Compute efficient inputs and outputs
                     Xeff(j,:) = Xeval(j,:) - repmat(eff(j), 1, m) .* Gx(j,:) - slackX(j,:);
                     Yeff(j,:) = Yeval(j,:) + repmat(eff(j), 1, s) .* Gy(j,:) + slackY(j,:);
-                
-                else
-                    eff(j) = beta;
                 end
                 
             end
