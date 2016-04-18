@@ -67,7 +67,7 @@ function [ out ] = deaout( varargin )
 %   http://www.deatoolbox.com
 %
 %   Version: 1.0
-%   LAST UPDATE: 11, March, 2016
+%   LAST UPDATE: 18, April, 2016
 %   
     
     
@@ -94,7 +94,7 @@ function [ out ] = deaout( varargin )
                 'allocative-cost','allocative-revenue','allocative-profit',...
                 'radial-bootstrap','radial-malmquist-bootstrap'})));  
     addPar(p,'orient','none',...
-                @(x) any(validatestring(x,{'io','oo','ddf','none','ddf_ccf'})));
+                @(x) any(validatestring(x,{'io','oo','ddf','none','ddf_cfg'})));
     addPar(p,'rts','crs',...
                 @(x) any(validatestring(x, {'crs','vrs','scaleeff'})));
     addPar(p, 'lambda', NaN, @(x) isnumeric(x));

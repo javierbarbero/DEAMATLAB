@@ -27,7 +27,7 @@ function [ options ] = getDEAoptions( n, varargin )
     addPar(p, 'disp', 0, @(x) ismember(x, [0, 1]) );
     % Radial models
     addPar(p,'orient','none',...
-                @(x) any(validatestring(x,{'io','oo','ddf','none','ddf_ccf'})));
+                @(x) any(validatestring(x,{'io','oo','ddf','none','ddf_cfg'})));
     addPar(p,'rts','crs',...
                 @(x) any(validatestring(x, {'crs','vrs'})));
     addPar(p, 'Gx', [], @(x) isnumeric(x) );

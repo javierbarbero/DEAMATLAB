@@ -10,7 +10,7 @@ function [ out ] = deaund( X, Y, Yu, varargin)
 %   - 'names': DMU names.
 %   - 'orient': orientation. Directional distane function with undesirable
 %   outputs 'ddf' (Aparicio, Pastor and Zofio, 2013), default. Directional 
-%   distance function with undesirable outputs 'ddf_ccf' (Chung, Fare and 
+%   distance function with undesirable outputs 'ddf_cfg' (Chung, Fare and 
 %   Grosskopf).
 %
 %   Advanced parameters:
@@ -55,8 +55,8 @@ function [ out ] = deaund( X, Y, Yu, varargin)
             orient = 'ddf';
         case {'ddf'}
             orient = 'ddf';
-        case {'ddf_ccf'}
-            orient = 'ddf_ccf';
+        case {'ddf_cfg'}
+            orient = 'ddf_cfg';
         otherwise
             error('Orientation for the undesarible outputs model must be ddf');
     end 
@@ -256,7 +256,7 @@ function [ out ] = deaund( X, Y, Yu, varargin)
                 
             end
             
-        case 'ddf_ccf'
+        case 'ddf_cfg'
             
             % (Chung, Fare and Grosskopf)            
             

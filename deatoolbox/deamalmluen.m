@@ -74,7 +74,7 @@ function [ out ] = deamalmluen( X, Y, Yu, varargin )
     end        
     
     % Check orientation
-    if ~strcmp(orient, 'ddf') && ~strcmp(orient, 'ddf_ccf')
+    if ~strcmp(orient, 'ddf') && ~strcmp(orient, 'ddf_cfg')
         error('Malmquist-Luenberger index is for ''ddf'' or ''ddf_ccf'' with undesirable outputs')
     end
     
