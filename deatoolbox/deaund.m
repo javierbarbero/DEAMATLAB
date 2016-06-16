@@ -27,7 +27,7 @@ function [ out ] = deaund( X, Y, Yu, varargin)
 %   http://www.deatoolbox.com
 %
 %   Version: 1.0
-%   LAST UPDATE: 18, April, 2016
+%   LAST UPDATE: 16, June, 2016
 %
 
     % Check size
@@ -164,7 +164,7 @@ function [ out ] = deaund( X, Y, Yu, varargin)
                 Gyu = repmat(Gyu, size(Y,1), size(Y,2));
             end
             
-            maxYu = max(max([Yu Yueval]));
+            maxYu = max(max([Yu; Yueval]));
  
            
             % For each DMU
