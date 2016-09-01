@@ -29,7 +29,7 @@ function [ out ] = deaaddit( X, Y, varargin )
 %   http://www.deatoolbox.com
 %
 %   Version: 1.0
-%   LAST UPDATE: 18, April, 2016
+%   LAST UPDATE: 1, September, 2016
 %
 
     % Check size
@@ -127,6 +127,7 @@ function [ out ] = deaaddit( X, Y, varargin )
     % Cols: n DMUs + m input slacks + s output slacks
     Z = zeros(neval, n + m + s);
     Eflag = NaN(neval, 1);
+    dualeqlin = nan(neval, m + s + ~isempty(beqRTS2));
     
     % OPTIMIZATION OPTIONS:
     optimopts = options.optimopts;    
@@ -142,7 +143,7 @@ function [ out ] = deaaddit( X, Y, varargin )
                 Y', zeros(s,m), -eye(s,s);               
                AeqRTS2];
         beq = [Xeval(j,:)'; Yeval(j,:)'; beqRTS2];
-        [z, ~, exitflag] = linprog(f, [], [], Aeq, beq, lb, [], [], optimopts);
+        [z, ~, exitflag, ~, dualz] = linprog(f, [], [], Aeq, beq, lb, [], [], optimopts);
         if exitflag ~= 1
             if options.warning
                 warning('Optimization exit flag: %i', exitflag)
@@ -156,6 +157,8 @@ function [ out ] = deaaddit( X, Y, varargin )
         end
         Z(j,:) = z;
         Eflag(j) = exitflag;
+        dualeqlin(j, :) = dualz.eqlin;
+        
     end
     
     % Get results
@@ -172,12 +175,22 @@ function [ out ] = deaaddit( X, Y, varargin )
     slack.X = slackX;
     slack.Y = slackY;    
     
+    % Dual structure
+    dual.X = dualeqlin(:, 1:m);
+    dual.Y = - dualeqlin(:, m+1: m+s);
+    if ~isempty(beqRTS2)
+        dual.rts = - dualeqlin(:, m+s+1: m+s+1);
+    else
+        dual.rts = nan(neval,1);
+    end
+    
     % SAVE results and input data
     out = deaout('n', n, 'neval', neval', 's', s, 'm', m,...
         'X', X, 'Y', Y, 'names', options.names,...
         'model', 'additive', 'orient', orient, 'rts', rts,...
         'lambda', lambda, 'slack', slack,...
         'eff', eff, 'Xeff', Xeff, 'Yeff', Yeff,...
+        'dual', dual,...
         'exitflag', Eflag, ...
         'dispstr', 'names/X/Y/slack.X/slack.Y/eff');
 

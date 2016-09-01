@@ -11,7 +11,7 @@ function [ options ] = getDEAoptions( n, varargin )
     
     % Default optimization-options
     optimoptsdef = optimoptions('linprog','display','off', 'Algorithm','dual-simplex', 'TolFun', 1e-10, 'TolCon', 1e-7);
-
+  
     % Parse Options
     p = inputParser;
     if verLessThan('matlab', '8.2')

@@ -32,7 +32,7 @@ function [ out ] = dea( X, Y, varargin)
 %   http://www.deatoolbox.com
 %
 %   Version: 1.0
-%   LAST UPDATE: 18, April, 2016
+%   LAST UPDATE: 1, September, 2016
 %
 
     % Check size
@@ -117,6 +117,8 @@ function [ out ] = dea( X, Y, varargin)
     Eflag = nan(neval, 2);
     Xeff = nan(neval, m);
     Yeff = nan(neval, s);
+    dualineqlin = nan(neval, m + s);
+    dualeqlin = nan(neval, 1);
     
     % OPTIMIZE: SOLVE LINEAR PROGRAMMING MODEL
     switch(orient)
@@ -139,7 +141,7 @@ function [ out ] = dea( X, Y, varargin)
                 lb = zeros(1, n + 1);
                                 
                 % Optimize
-                [z, ~, exitflag] = linprog(f, A, b, Aeq, beq, lb, [], [], optimopts);
+                [z, ~, exitflag, ~, dual] = linprog(f, A, b, Aeq, beq, lb, [], [], optimopts);
                 if exitflag ~= 1
                     if options.warning
                         warning('DMU %i. First Step. Optimization exit flag: %i', j, exitflag)
@@ -156,6 +158,14 @@ function [ out ] = dea( X, Y, varargin)
                 theta = z(end);
                 Eflag(j, 1) = exitflag;
                 eff(j) = theta;
+                
+                % Get dual results
+                dualineqlin(j, :) = dual.ineqlin;
+                if ~isempty(beqRTS1)
+                    dualeqlin(j, 1) = dual.eqlin;
+                else
+                    dualeqlin(j, 1) = NaN;
+                end                
                 
                 % SECOND STEP
                 
@@ -225,7 +235,7 @@ function [ out ] = dea( X, Y, varargin)
                 lb = zeros(1, n + 1);
 
                 % Optimize
-                [z, ~, exitflag] = linprog(f, A, b, Aeq, beq, lb, [], [], optimopts);
+                [z, ~, exitflag, ~, dual] = linprog(f, A, b, Aeq, beq, lb, [], [], optimopts);
                 if exitflag ~= 1
                     if options.warning
                         warning('DMU %i. First Step. Optimization exit flag: %i', j, exitflag)
@@ -242,6 +252,14 @@ function [ out ] = dea( X, Y, varargin)
                 phi = z(end);
                 eff(j) = phi;
                 Eflag(j, 1) = exitflag;
+                
+                % Get dual results
+                dualineqlin(j, :) = dual.ineqlin;
+                if ~isempty(beqRTS1)
+                    dualeqlin(j, 1) = dual.eqlin;
+                else
+                    dualeqlin(j, 1) = NaN;
+                end    
                 
                 % SECOND STEP
                 
@@ -332,7 +350,7 @@ function [ out ] = dea( X, Y, varargin)
                 lb = [zeros(1, n), -inf];
                 
                 % Optimize
-                [z, ~, exitflag] = linprog(f, A, b, Aeq, beq, lb, [], [], optimopts);
+                [z, ~, exitflag, ~, dual] = linprog(f, A, b, Aeq, beq, lb, [], [], optimopts);
                 if exitflag ~= 1
                     if options.warning
                         warning('DMU %i. First Step. Optimization exit flag: %i', j, exitflag)
@@ -349,6 +367,14 @@ function [ out ] = dea( X, Y, varargin)
                 beta = z(end);
                 eff(j) = beta;
                 Eflag(j, 1) = exitflag;
+                
+                % Get dual results
+                dualineqlin(j, :) = dual.ineqlin;
+                if ~isempty(beqRTS1)
+                    dualeqlin(j, 1) = dual.eqlin;
+                else
+                    dualeqlin(j, 1) = NaN;
+                end  
                 
                 % SECOND STEP
                 
@@ -398,7 +424,16 @@ function [ out ] = dea( X, Y, varargin)
   
     % Slacks structure
     slack.X = slackX;
-    slack.Y = slackY;    
+    slack.Y = slackY;  
+    
+    % Dual structure
+    dual.X = dualineqlin(:, 1:m);
+    dual.Y = dualineqlin(:, m+1: m+s);
+    if ~isempty(beqRTS2)
+        dual.rts = dualeqlin(:);
+    else
+        dual.rts = nan(neval,1);
+    end
     
     % SAVE results and input data
     out = deaout('n', n, 'neval', neval', 's', s, 'm', m,...
@@ -406,6 +441,7 @@ function [ out ] = dea( X, Y, varargin)
         'model', 'radial', 'orient', orient, 'rts', rts,...
         'lambda', lambda, 'slack', slack,...
         'eff', eff, 'Xeff', Xeff, 'Yeff', Yeff,...
+        'dual', dual,...
         'exitflag', Eflag,...
         'dispstr', 'names/X/Y/eff/slack.X/slack.Y');
 

@@ -22,6 +22,9 @@ function [ out ] = deaout( varargin )
 %   - lambda: computed lambda'.
 %   - Xeff: efficient X's.
 %   - Yeff: efficient Y's.
+%   - dual.X: input shadow prices.
+%   - dual.Y: output shadow prices.
+%   - dual.rts: RTS dual.
 %   - exitflag: exit flags of the optimization.
 %
 %   Scale efficiency models:
@@ -67,7 +70,7 @@ function [ out ] = deaout( varargin )
 %   http://www.deatoolbox.com
 %
 %   Version: 1.0
-%   LAST UPDATE: 18, April, 2016
+%   LAST UPDATE: 1, September, 2016
 %   
     
     
@@ -102,6 +105,7 @@ function [ out ] = deaout( varargin )
     addPar(p, 'eff', NaN, @(x) isnumeric(x) || isstruct(x));
     addPar(p, 'Xeff', NaN, @(x) isnumeric(x));
     addPar(p, 'Yeff', NaN, @(x) isnumeric(x));
+    addPar(p, 'dual', NaN, @(x) isstruct(x));
     addPar(p, 'dispstr', 'names/X/Y/slackX/slackY/eff', @(x) ischar(x));
     addPar(p, 'exitflag', NaN, @(x) isnumeric(x));
     

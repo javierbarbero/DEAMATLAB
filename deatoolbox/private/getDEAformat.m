@@ -6,7 +6,7 @@ function [ name, format ] = getDEAformat( fieldname, orient )
 %   http://www.deatoolbox.com
 %
 %   Version: 1.0
-%   LAST UPDATE: 16, March, 2016
+%   LAST UPDATE: 1, September, 2016
 %
 
     if nargin < 2
@@ -52,6 +52,15 @@ function [ name, format ] = getDEAformat( fieldname, orient )
             format = fmtNumber;
         case 'Yeff'
             name = 'Yeff';
+            format = fmtNumber;
+        case 'dual.X'
+            name = 'dualX';
+            format = fmtNumber;
+        case 'dual.Y'
+            name = 'dualY';
+            format = fmtNumber;
+        case 'dual.rts'
+            name = 'dualRTS';
             format = fmtNumber;
         case 'exitflag'
             name = 'EFlag';
