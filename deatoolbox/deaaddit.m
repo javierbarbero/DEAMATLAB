@@ -29,7 +29,7 @@ function [ out ] = deaaddit( X, Y, varargin )
 %   http://www.deatoolbox.com
 %
 %   Version: 1.0
-%   LAST UPDATE: 1, September, 2016
+%   LAST UPDATE: 23, January, 2017
 %
 
     % Check size
@@ -153,7 +153,8 @@ function [ out ] = deaaddit( X, Y, varargin )
             if options.warning
                 warning('Optimization doesn''t return a result. Results set to NaN.')
             end
-            z = nan(n + m + s, 1);                  
+            z = nan(n + m + s, 1);   
+            dualz.eqlin = nan(1, m + s + ~isempty(beqRTS2));
         end
         Z(j,:) = z;
         Eflag(j) = exitflag;

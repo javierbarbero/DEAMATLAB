@@ -32,7 +32,7 @@ function [ out ] = dea( X, Y, varargin)
 %   http://www.deatoolbox.com
 %
 %   Version: 1.0
-%   LAST UPDATE: 1, September, 2016
+%   LAST UPDATE: 23, January, 2017
 %
 
     % Check size
@@ -151,7 +151,9 @@ function [ out ] = dea( X, Y, varargin)
                     if options.warning
                         warning('DMU %i. First Step. Optimization doesn''t return a result. Efficiency set to NaN.', j)
                     end
-                    z = nan(n + 1, 1);                        
+                    z = nan(n + 1, 1);  
+                    dual.ineqlin = nan(1, m + s);
+                    dual.eqlin = nan(1, 1);
                 end
                 
                 % Get efficiency
@@ -245,7 +247,9 @@ function [ out ] = dea( X, Y, varargin)
                     if options.warning
                         warning('DMU %i. First Step. Optimization doesn''t return a result. Efficiency set to NaN.', j)
                     end
-                    z = nan(n + 1, 1);                    
+                    z = nan(n + 1, 1);  
+                    dual.ineqlin = nan(1, m + s);
+                    dual.eqlin = nan(1, 1);
                 end
                 
                 % Get efficiency
@@ -360,7 +364,9 @@ function [ out ] = dea( X, Y, varargin)
                     if options.warning
                         warning('DMU %i. First Step. Optimization doesn''t return a result. Efficiency set to NaN.', j)
                     end
-                    z = nan(n + 1, 1);                    
+                    z = nan(n + 1, 1);  
+                    dual.ineqlin = nan(1, m + s);
+                    dual.eqlin = nan(1, 1);
                 end
                 
                 % Get efficiency
