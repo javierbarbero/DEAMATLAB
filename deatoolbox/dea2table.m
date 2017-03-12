@@ -10,7 +10,7 @@ function [ T ] = dea2table( out, dispstr )
 %
 %   Example
 %       
-%       io = dea2table(X, Y, 'orient', 'io');
+%       io = dea(X, Y, 'orient', 'io');
 %       T = dea2table(io);
 %
 %       T2 = dea2table(io, 'names/lambda/eff');
@@ -21,7 +21,7 @@ function [ T ] = dea2table( out, dispstr )
 %   http://www.deatoolbox.com
 %
 %   Version: 1.0
-%   LAST UPDATE: 1, March, 2016
+%   LAST UPDATE: 12, March, 2017
 %
 
     if nargin < 2
