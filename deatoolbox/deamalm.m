@@ -24,7 +24,7 @@ function [ out ] = deamalm( X, Y, varargin )
 %   http://www.deatoolbox.com
 %
 %   Version: 1.0
-%   LAST UPDATE: 25, March, 2016
+%   LAST UPDATE: 26, April, 2017
 %
 
     % Check size
@@ -36,7 +36,7 @@ function [ out ] = deamalm( X, Y, varargin )
         error('Number of time periods in X and Y must be equal')
     end
     
-    % Get number of DMUs (m), inputs (m) and outputs (s)
+    % Get number of DMUs (n), inputs (m) and outputs (s)
     [n, m, T] = size(X);
     s = size(Y,2);
     

@@ -32,7 +32,7 @@ function [ out ] = dea( X, Y, varargin)
 %   http://www.deatoolbox.com
 %
 %   Version: 1.0
-%   LAST UPDATE: 23, January, 2017
+%   LAST UPDATE: 26, April, 2017
 %
 
     % Check size
@@ -40,7 +40,7 @@ function [ out ] = dea( X, Y, varargin)
         error('Number of rows in X must be equal to number of rows in Y')
     end    
     
-    % Get number of DMUs (m), inputs (m) and outputs (s)
+    % Get number of DMUs (n), inputs (m) and outputs (s)
     [n, m] = size(X);
     s = size(Y,2);
     

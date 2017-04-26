@@ -64,9 +64,6 @@ function [ S, SB, pvalue, critval ] = deatestrts( X, Y, varargin )
             error('DEA rts test not available for ''ddf''');
     end
 
-    % Observed S
-    
-    
     % Bootstrap
     rset = rng(); % Get random number generator settings
     crsB = deaboot(X, Y, varargin{:}, 'rts', 'crs', 'nreps', nreps, 'alpha', alph);

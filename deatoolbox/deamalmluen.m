@@ -28,7 +28,7 @@ function [ out ] = deamalmluen( X, Y, Yu, varargin )
 %   http://www.deatoolbox.com
 %
 %   Version: 1.0
-%   LAST UPDATE: 25, March, 2016
+%   LAST UPDATE: 26, April, 2017
 %
 
     % Check size
@@ -44,7 +44,7 @@ function [ out ] = deamalmluen( X, Y, Yu, varargin )
         error('Number of time periods in Y and Yu must be equal')
     end
     
-    % Get number of DMUs (m), inputs (m), outputs (s), and undesirable
+    % Get number of DMUs (n), inputs (m), outputs (s), and undesirable
     % outputs (r)
     [n, m, T] = size(X);
     s = size(Y,2);

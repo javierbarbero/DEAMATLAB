@@ -23,7 +23,7 @@ function [ out ] = deaadditsuper( X, Y, varargin )
 %   http://www.deatoolbox.com
 %
 %   Version: 1.0
-%   LAST UPDATE: 18, March, 2016
+%   LAST UPDATE: 26, April, 2017
 %
 
     % Check size
@@ -33,7 +33,7 @@ function [ out ] = deaadditsuper( X, Y, varargin )
     
     % TODO: Additive model (other function)
     
-    % Get number of DMUs (m), inputs (m) and outputs (s)
+    % Get number of DMUs (n), inputs (m) and outputs (s)
     [n, m] = size(X);
     s = size(Y,2);
     neval = n;

@@ -27,7 +27,7 @@ function [ out ] = deaund( X, Y, Yu, varargin)
 %   http://www.deatoolbox.com
 %
 %   Version: 1.0
-%   LAST UPDATE: 16, June, 2016
+%   LAST UPDATE: 27, April, 2017
 %
 
     % Check size
@@ -39,7 +39,7 @@ function [ out ] = deaund( X, Y, Yu, varargin)
         error('Number of rows in Yu must be equal to number of rows in Y');
     end
     
-    % Get number of DMUs (m), inputs (m), outputs (s), and undesirable
+    % Get number of DMUs (n), inputs (m), outputs (s), and undesirable
     % outputs (r)
     [n, m] = size(X);
     s = size(Y,2);
