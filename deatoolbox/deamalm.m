@@ -24,7 +24,7 @@ function [ out ] = deamalm( X, Y, varargin )
 %   http://www.deatoolbox.com
 %
 %   Version: 1.0
-%   LAST UPDATE: 26, April, 2017
+%   LAST UPDATE: 1, May, 2017
 %
 
     % Check size
@@ -50,11 +50,6 @@ function [ out ] = deamalm( X, Y, varargin )
     
     if ~isempty(options.Yeval) && size(options.Yeval) ~= size(Y)
         error('Yeval and Y must be equal')
-    end
-    
-    % Check RTS
-    if ~strcmp(options.rts, 'crs')
-        error('Malmquist index only available for ''crs'' returns to scale')
     end
     
     % Check orientation
