@@ -77,7 +77,7 @@ function [ out ] = deamalmluen( X, Y, Yu, varargin )
     if ~strcmp(orient, 'ddf') && ~strcmp(orient, 'ddf_cfg')
         error('Malmquist-Luenberger index is for ''ddf'' or ''ddf_ccf'' with undesirable outputs')
     end
-    
+        
     % Create matrices to store results
     ML = nan(n, T - 1);
     MLTEC = nan(n, T - 1);
@@ -86,6 +86,20 @@ function [ out ] = deamalmluen( X, Y, Yu, varargin )
         Eflag = nan(n, (T - 1) * 4);
     else
         Eflag = nan(n, (T - 1) * 3);
+    end
+    
+        % Check if 'geomean' and the old parameter 'period' are correct
+    if ~isempty(options.geomean)
+        warning('''geomean'' parameter has been deprecated and will dissapear in a future realse.\n Set the new ''period'' parameter to ''geomean'' for the previous behavior of ''geomean'' = 1.\n Set ''period'' to ''base'' for the preivous behaviour of ''geomean'' = 0. See help for more information.', 'DEATOOLBOX:deprecated');        
+        if options.geomean
+            if ~strcmp(options.period, 'geomean' )
+                error('If ''geomean'' is set to 1, ''period'' must be set to ''geomean''')
+            end
+        else
+            if ~strcmp(options.period, 'base' )                
+                error('If ''geomean'' is set to 0, ''period'' must be set to ''base''')
+            end
+        end
     end
     
     % For each time period
@@ -99,7 +113,7 @@ function [ out ] = deamalmluen( X, Y, Yu, varargin )
         
         % Compute efficiency at base period
         temp_dea = deaund(X(:,:,tb), Y(:,:,tb), Yu(:,:,tb), varargin{:}, 'secondstep', 0);
-        t_eff = temp_dea.eff;
+        tb_eff = temp_dea.eff;
         Eflag(:, (2*t - 1)) = temp_dea.exitflag(:, 1);
         
         % Compute efficiency at time t + 1
@@ -112,36 +126,38 @@ function [ out ] = deamalmluen( X, Y, Yu, varargin )
                     'Xeval', X(:,:, t + 1),...
                     'Yeval', Y(:,:, t + 1),...
                     'Yueval', Yu(:,:, t + 1), 'secondstep', 0);
-        tevalt1_eff = temp_dea.eff;
+        tbevalt1_eff = temp_dea.eff;
         Eflag(:, (2*t - 1) + 2) = temp_dea.exitflag(:, 1);
         
-        % If geomean
-        if options.geomean
-            % Evaluate each DMU at t + 1, with the others at base period                         
-            temp_dea = deaund(X(:,:,t + 1), Y(:,:,t + 1), Yu(:,:,t + 1), varargin{:},...
-                    'Xeval', X(:,:, tb),...
-                    'Yeval', Y(:,:, tb),...
-                    'Yueval', Yu(:, :, tb), 'secondstep', 0);
+        % Additional calculatiosn for 'geomean' or 'comparison' period
+        switch(options.period)
+            case {'geomean','comparison'}
+                % Evaluate each DMU at t + 1, with the others at base period                         
+                temp_dea = deaund(X(:,:,t + 1), Y(:,:,t + 1), Yu(:,:,t + 1), varargin{:},...
+                        'Xeval', X(:,:, tb),...
+                        'Yeval', Y(:,:, tb),...
+                        'Yueval', Yu(:, :, tb), 'secondstep', 0);
 
-            t1evalt_eff = temp_dea.eff;   
-            Eflag(:, (2*t - 1) + 3) = temp_dea.exitflag(:, 1);
-        else 
-            t1evalt_eff = NaN;
+                t1evaltb_eff = temp_dea.eff;   
+                Eflag(:, (2*t - 1) + 3) = temp_dea.exitflag(:, 1);
+            case 'base' 
+                t1evaltb_eff = NaN;
         end
         
         % Technical Efficiency
-        MLTEC(:, t) = (1 + t_eff) ./ (1 + t1_eff);
-        
+        MLTEC(:, t) = (1 + tb_eff) ./ (1 + t1_eff);
+
         % Technological Change
-        
-        % Technological Change
-        if options.geomean
-            MLTC(:, t) = (( (1 + t1_eff) ./ (1 + tevalt1_eff) ) .* ((1 + t1evalt_eff) ./ (1 + t_eff) )).^(1/2);
-        else
-            MLTC(:, t) = (1 + t1_eff) ./ (1 + tevalt1_eff);
+        switch(options.period)
+            case 'geomean'
+                MLTC(:, t) = (( (1 + t1_eff) ./ (1 + tbevalt1_eff) ) .* ((1 + t1evaltb_eff) ./ (1 + tb_eff) )).^(1/2);
+            case 'base'
+                MLTC(:, t) = (1 + t1_eff) ./ (1 + tbevalt1_eff);
+            case 'comparison'
+                MLTC(:, t) = (1 + t1evaltb_eff) ./ (1 + tb_eff);    
         end
         
-        % Malmquist index
+        % Malmquist-Luenberger index
         ML(:, t) = MLTEC(:, t) .* MLTC(:, t);
         
         
@@ -152,8 +168,7 @@ function [ out ] = deamalmluen( X, Y, Yu, varargin )
     eff.MLTEC = MLTEC;
     eff.MLTC = MLTC;
     eff.T = T;
-    eff.fixbaset = options.fixbaset;
-    
+   
     
     % Extract some results
     neval = NaN;
