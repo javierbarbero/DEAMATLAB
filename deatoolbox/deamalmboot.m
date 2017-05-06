@@ -66,7 +66,8 @@ function [ out ] = deamalmboot( X, Y, varargin )
     % Get number of Bootstrap replications and significance
     nreps = options.nreps;
     alph = options.alpha;
-        
+    
+    
     % Create matrices to store results
     Mb = nan(n, T - 1);
     MTECb = nan(n, T - 1);
@@ -76,20 +77,6 @@ function [ out ] = deamalmboot( X, Y, varargin )
     MTECB = nan(n, nreps, T - 1);
     MTCB = nan(n, nreps, T - 1);
     EflagB = nan(n, nreps * 2, (T - 1)); % Only for T and T + 1
-    
-    % Check if 'geomean' and the old parameter 'period' are correct
-    if ~isempty(options.geomean)
-        warning('''geomean'' parameter has been deprecated and will dissapear in a future realse.\n Set the new ''period'' parameter to ''geomean'' for the previous behavior of ''geomean'' = 1.\n Set ''period'' to ''base'' for the preivous behaviour of ''geomean'' = 0. See help for more information.', 'DEATOOLBOX:deprecated');        
-        if options.geomean
-            if ~strcmp(options.period, 'geomean' )
-                error('If ''geomean'' is set to 1, ''period'' must be set to ''geomean''')
-            end
-        else
-            if ~strcmp(options.period, 'base' )                
-                error('If ''geomean'' is set to 0, ''period'' must be set to ''base''')
-            end
-        end
-    end
     
     % Original Malmquist indices
     tempmalm = deamalm(X, Y, varargin{:});
@@ -145,6 +132,7 @@ function [ out ] = deamalmboot( X, Y, varargin )
 
 
             % Gamma matrix   
+            %keyboard
             C = ones(n, 2);
             Gamma = (1 + h.^2).^(-1/2) .* ...
                 (DeltaStar + h .* raMat - C * deltaMat) + ...
@@ -161,7 +149,7 @@ function [ out ] = deamalmboot( X, Y, varargin )
             % MALMQUIST Index
             % Compute efficiency at base period
             temp_dea = dea(Xpseudo1, Y(:,:,tb), varargin{:}, 'secondstep', 0, 'Xeval', X(:, :, tb), 'Yeval', Y(:, :, tb) );
-            tb_eff = temp_dea.eff;
+            t_eff = temp_dea.eff;
 
             % Compute efficiency at time t + 1
             temp_dea = dea(Xpseudo2, Y(:,:,t + 1), varargin{:}, 'secondstep', 0, 'Xeval', X(:, :, t + 1), 'Yeval', Y(:, :, t + 1) );
@@ -173,36 +161,38 @@ function [ out ] = deamalmboot( X, Y, varargin )
                         'Yeval', Y(:,:, t + 1), ...
                         'secondstep', 0);
 
-            tbevalt1_eff = temp_dea.eff;
+            tevalt1_eff = temp_dea.eff;
             
-            % Additional calculatiosn for 'geomean' or 'comparison' period
-            switch(options.period)
-                case {'geomean','comparison'}
-                    % Evaluate each DMU at t + 1, with the others at base period                         
-                    temp_dea = dea(Xpseudo2, Y(:,:,t + 1), varargin{:},...
-                            'Xeval',Xpseudo1,...
-                            'Yeval', Y(:,:, tb));
+            % If geomean
+            if options.geomean
+                % Evaluate each DMU at t + 1, with the others at base period                         
+                temp_dea = dea(Xpseudo2, Y(:,:,t + 1), varargin{:},...
+                        'Xeval',Xpseudo1,...
+                        'Yeval', Y(:,:, tb));
 
-                    t1evaltb_eff = temp_dea.eff;    
-                case 'base'  
-                    t1evaltb_eff = NaN;
-            end            
+                t1evalt_eff = temp_dea.eff;    
+            else 
+                t1evalt_eff = NaN;
+            end
             
             % Technical Efficiency
-            MTECB(:, i, t) = t1_eff ./ tb_eff;
+            MTECB(:, i, t) = t1_eff ./ t_eff;
 
             % Technological Change
-            switch(options.period)
-                case 'geomean'
-                    MTCB(:, i, t) = ((tbevalt1_eff ./ t1_eff) .* (tb_eff ./ t1evaltb_eff)).^(1/2);
-                case 'base'
-                    MTCB(:, i, t) = tbevalt1_eff ./ t1_eff;
-                case 'comparison'
-                    MTCB(:, i, t) = tb_eff ./ t1evaltb_eff ;
+            
+            % Technological Change
+            if options.geomean
+                MTCB(:, i, t) = ((tevalt1_eff ./ t1_eff) .* (t_eff ./ t1evalt_eff)).^(1/2);
+            else
+                MTCB(:, i, t) = tevalt1_eff ./ t1_eff;
             end
 
             % Malmquist index
             MB(:, i, t) = MTECB(:, i, t) .* MTCB(:, i, t);
+            
+            % Exit flag
+            % EflagB(:, (2*t - 1):(2*t), t) = temp_dea.exitflag;
+            
         
         end
         
@@ -242,7 +232,8 @@ function [ out ] = deamalmboot( X, Y, varargin )
     eff.MTEC = MTEC;
     eff.MTC = MTC;
     eff.T = T;
-
+    eff.fixbaset = options.fixbaset;    
+    
     % Extract some results
     neval = NaN;
     lambda = NaN;
