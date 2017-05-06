@@ -28,7 +28,7 @@ function [ out ] = deamalmluen( X, Y, Yu, varargin )
 %   http://www.deatoolbox.com
 %
 %   Version: 1.0
-%   LAST UPDATE: 26, April, 2017
+%   LAST UPDATE: 6, May, 2017
 %
 
     % Check size
@@ -173,6 +173,13 @@ function [ out ] = deamalmluen( X, Y, Yu, varargin )
         'exitflag', Eflag,...
         'dispstr', 'names/eff.ML/eff.MLTEC/eff.MLTC',...
         'r', r, 'Yu', Yu);
+        
+    out.period = options.period;
+    out.fixbaset = options.fixbaset;  
+    
+    % Custom display texts
+    out.disptext_text2 = 'Malmquist-Luenberger:';
+    out.disptext_text4 = 'ML: Malmquist-Luenberger. MLTEC: Technical Efficiency Change. MLTC: Technical Change.';
     
 
 end

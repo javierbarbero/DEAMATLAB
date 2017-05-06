@@ -159,8 +159,6 @@ function [ out ] = deamalm( X, Y, varargin )
     eff.MTEC = MTEC;
     eff.MTC = MTC;
     eff.T = T;
-    eff.fixbaset = options.fixbaset;
-    eff.periiod = options.period;
     
     % Extract some results
     neval = NaN;
@@ -178,6 +176,13 @@ function [ out ] = deamalm( X, Y, varargin )
         'eff', eff, 'Xeff', Xeff, 'Yeff', Yeff,...
         'exitflag', Eflag,...
         'dispstr', 'names/eff.M/eff.MTEC/eff.MTC' );
+    
+    out.period = options.period;
+    out.fixbaset = options.fixbaset;    
+    
+    % Custom display texts
+    out.disptext_text2 = 'Malmquist:';
+    out.disptext_text4 = 'M = Malmquist. MTEC = Technical Efficiency Change. MTC = Technical Change.';
     
 
 end

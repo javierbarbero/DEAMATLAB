@@ -25,7 +25,7 @@ function [ out ] = deamalmboot( X, Y, varargin )
 %   http://www.deatoolbox.com
 %
 %   Version: 1.0
-%   LAST UPDATE: 26, April, 2017
+%   LAST UPDATE: 6, May, 2017
 %
 
     % Check size
@@ -252,6 +252,13 @@ function [ out ] = deamalmboot( X, Y, varargin )
         'exitflag', Eflag,...
         'dispstr', 'names/eff.M.o/eff.M.b/eff.M.cL/eff.M.cU',...
         'nreps', nreps, 'alpha', alph);
-        % 'names/eff.M.o/eff.M.b/eff.M.cL/eff.M.cU/eff.MTEC.o/eff.MTEC.b/eff.MTEC.cL/eff.MTEC.cU/eff.MTC.o/eff.MTC.b/eff.MTC.cL/eff.MTC.cU'
+        
+    out.period = options.period;
+    out.fixbaset = options.fixbaset;    
+    
+    % Custom display texts
+    out.disptext_text2 = 'Malmquist:';
+    out.disptext_text4 = 'M = Malmquist. Mboot = Bootstrapped Malmquist. McLow = Lower confidence interval. McUpp: Upper confidence interval.';
+    
     
 end

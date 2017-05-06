@@ -18,93 +18,141 @@ function [  ] = deadisp( out, dispstr )
 %   http://www.deatoolbox.com
 %
 %   Version: 1.0
-%   LAST UPDATE: 11, March, 2016
+%   LAST UPDATE: 6, May, 2017
 %
+
+    % Check if input is a structure
+    if ~isstruct(out)
+        error('Input is not a structure');
+    end
     
+    % If not custom dispstr is specified
     if nargin < 2
-        dispstr = out.dispstr;
+        % Check if the structure has a dispstr
+        if isfield(out, 'dispstr')
+            dispstr = out.dispstr;
+        else
+            error('Input structure does not have a display string, ''dispstr'', field')
+        end
     end
 
-    % HEADER
+    % TITLE
     fprintf('_______________________________\n');
-    fprintf('<strong>Data Envelopment Analysis (DEA)</strong>\n\n');
+    if isfield(out, 'disptext_title')
+        % Display specified title
+        fprintf('<strong>%s</strong>\n\n',out.disptext_title);
+    else
+        fprintf('<strong>Data Envelopment Analysis (DEA)</strong>\n\n');
+    end
     
+    % TEXT 1: Before model information
+    if isfield(out, 'disptext_text1')
+        fprintf('%s\n', out.disptext_text1)
+    end
+    
+    % MODEL INFORMATION    
     % DMU and number of inputs and outputs information
-    fprintf('DMUs: %i ', out.n);
-    if out.neval ~= out.n && ~isnan(out.neval)
-        fprintf('(%i evaluated)', out.neval)
+    if isfield(out, 'n')
+        fprintf('DMUs: %i ', out.n);
+        if isfield(out, 'neval')
+            if out.neval ~= out.n && ~isnan(out.neval)
+                fprintf('(%i evaluated)', out.neval)
+            end
+        end
+        fprintf('\n');
     end
-    fprintf('\n');
-    fprintf('Inputs: %i     Outputs: %i ', out.m, out.s);
-    if ~isnan(out.r)
-        fprintf('    Undesirable: %i ', out.r);
+    
+    if isfield(out, 'm') && isfield(out, 's') 
+        fprintf('Inputs: %i     Outputs: %i ', out.m, out.s);
+        if isfield(out, 'r')
+            if ~isnan(out.r)
+                fprintf('    Undesirable: %i ', out.r);
+            end
+        end
+        fprintf('\n');
     end
-    fprintf('\n');
     
     % Model
-    fprintf('Model: %s ', out.model);
-    if strcmp(out.model,'allocative')
-        fprintf('(%s)', out.modelalloc);
+    if isfield(out, 'model')
+        fprintf('Model: %s ', out.model);
+        fprintf('\n');
     end
-    fprintf('\n');
     
     % Orientation
-    fprintf('Orientation: %s ', out.orient);
-    switch(out.orient)
-        case 'io'
-            fprintf('(Input oriented)');
-        case 'oo'
-            fprintf('(Output oriented)');
-        case 'ddf'
-            fprintf('(Directional distance function)');
+    if isfield(out, 'orient')
+        fprintf('Orientation: %s ', out.orient);
+        switch(out.orient)
+            case 'io'
+                fprintf('(Input oriented)');
+            case 'oo'
+                fprintf('(Output oriented)');
+            case 'ddf'
+                fprintf('(Directional distance function)');
+        end
+        fprintf('\n');
     end
-    fprintf('\n');
     
     % Returns to scale
-    fprintf('Returns to scale: %s ', out.rts)
-    switch(out.rts)
-        case 'crs'
-            fprintf('(Constant)')
-        case 'vrs'
-            fprintf('(Variable)')
-        case 'scaleeff'
-            fprintf('(Scale efficiency)')
+    if isfield(out, 'rts')
+        fprintf('Returns to scale: %s ', out.rts)
+        switch(out.rts)
+            case 'crs'
+                fprintf('(Constant)')
+            case 'vrs'
+                fprintf('(Variable)')
+            case 'scaleeff'
+                fprintf('(Scale efficiency)')
+        end
+        fprintf('\n');
     end
-    fprintf('\n');
-    
+            
     % Bootstrap and significance
-    if ~isnan(out.nreps)
-        fprintf('Bootstrap replications: %i \n', out.nreps);
+    if isfield(out, 'nreps')
+        if ~isnan(out.nreps)
+            fprintf('Bootstrap replications: %i \n', out.nreps);
+        end
     end
-    if ~isnan(out.alpha)
-        fprintf('Significance level: %4.2f \n', out.alpha);
+    if isfield(out, 'alpha')
+        if ~isnan(out.alpha)
+            fprintf('Significance level: %4.2f \n', out.alpha);
+        end
     end
     
     fprintf('\n');
+    
+    % TEXT 2: After model information
+    if isfield(out, 'disptext_text2')
+        fprintf('%s\n', out.disptext_text2)
+    end
         
-    % Malmquist
-    switch(out.model)
-        case {'radial-malmquist','directional-malmquist-luenberger','radial-malmquist-bootstrap'}
-        
-            switch(out.model)
-                case {'radial-malmquist'}
-                    disp('Malmquist:');
-                case {'directional-malmquist-luenberger'}
-                    disp('Malmquist-Luenberger:');
-            end
-
-            if out.eff.fixbaset == 1
-                disp('Base period is period 1')
-            else
-                disp('Base period is previous period');
-            end
-            disp(' ');
+    % Period (for temporal models)
+    if isfield(out, 'period')
+        switch(out.period)
+            case 'base'
+                disp('Reference period is base period');
+            case 'comparison'
+                disp('Reference period is comparison period');
+            case 'geomean'
+                disp('Geometric mean is computed');
+        end
     end
     
-    %SDisp = setSDispExp(out.orient);
-    %SDisp.disp(out, dispstr);
+    % Fixbase t (for temporal models)
+    if isfield(out, 'fixbaset')
+        if out.fixbaset == 1
+            disp('Base period is period 1')
+        else
+            disp('Base period is previous period');
+        end
+        disp(' ');            
+    end
     
-    % Display table
+    % TEXT 3: Before table
+    if isfield(out, 'disptext_text3')
+        fprintf('%s\n', out.disptext_text3)
+    end  
+    
+    % TABLE
     dispstr = strsplit(dispstr, '/');
     tabAll = [];
     for i=1:length(dispstr)          
@@ -113,6 +161,17 @@ function [  ] = deadisp( out, dispstr )
             
             % Get name and format
             [name, format] = getDEAformat(paramstr, out.orient);
+            % If no name wind in output structure
+            if isempty(name)
+                disptext_field = sprintf('disptext_%s', strrep(paramstr,'.','_'));
+                if isfield(out, disptext_field)
+                    % If custom name exists in the output structure use it
+                    name = eval(sprintf('out.%s',disptext_field));
+                else
+                    % If not, display paramstr name without eff.
+                    name = strrep(paramstr, 'eff.', '');
+                end
+            end
             
             % Get data
             dat = eval(sprintf('out.%s', paramstr));
@@ -126,8 +185,7 @@ function [  ] = deadisp( out, dispstr )
                 
             % For each column in the data
             for j=1:ncols
-                
-                
+                                
                 % Get Body
                 bodyj = cellfun(@(x) sprintf(format, x), dat(:, j),'Unif',false);
 
@@ -168,16 +226,12 @@ function [  ] = deadisp( out, dispstr )
     disp(repelem('-', size(tabAll, 2))); % Upper Line
     disp(tabAll); % Table
     disp(repelem('-', size(tabAll, 2))); % Lower Line
-    
-    
-    % More infor in Malmquist or Malmquist-Luenberger
-    if strcmp(out.model, 'radial-malmquist')
-        disp('M = Malmquist. MTEC = Technical Efficiency Change. MTC = Technical Change.')
-    end
-    if strcmp(out.model, 'directional-malmquist-luenberger')
-        disp('ML: Malmquist-Luenberger. MLTEC: Technical Efficiency Change. MLTC: Technical Change.')
-    end
 
+    % TEXT 4: After table
+    if isfield(out, 'disptext_text4')
+        fprintf('%s\n', out.disptext_text4)
+    end
+    
     
 end
 

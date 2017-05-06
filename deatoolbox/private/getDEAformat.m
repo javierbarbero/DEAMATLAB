@@ -6,7 +6,7 @@ function [ name, format ] = getDEAformat( fieldname, orient )
 %   http://www.deatoolbox.com
 %
 %   Version: 1.0
-%   LAST UPDATE: 1, September, 2016
+%   LAST UPDATE: 6, May, 2017
 %
 
     if nargin < 2
@@ -175,7 +175,8 @@ function [ name, format ] = getDEAformat( fieldname, orient )
             name = 'MTCcUpp';
             format = fmtNumber;
         otherwise
-            error('Field %s not found', fieldname)
+            name = [];
+            format = fmtNumber;
     end   
     
 
