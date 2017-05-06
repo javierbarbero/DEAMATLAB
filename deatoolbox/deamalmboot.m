@@ -12,8 +12,17 @@ function [ out ] = deamalmboot( X, Y, varargin )
 %   - 'fixbaset': previous year 0 (default), first year 1.
 %   - 'nreps': number of bootstrap replications. Default is 200.
 %   - 'alpha': alpha value for confidence intervals. Default is 0.05.
+%   - 'period': compute geometric mean of base and comparison periods for 
+%     technological change ('geomean'), use base period as reference ('base'),
+%     or use comparison period as reference ('comparison').
+%     
+%
+%   Deprecated parameters:
 %   - 'geomean': compute geometric mean for technological change. Default
-%   is 1.
+%     is 1. 'geomean' parameter has been deprecated and will dissapear in a
+%     future realse. Set the new 'period' parapeter to 'geomean' for the 
+%     previous behavior of 'geomean' = 1. Set 'period' to 'base' for the 
+%     preivous behaviour of 'geomean' = 0.
 %
 %   Example
 %     

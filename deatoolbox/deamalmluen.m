@@ -14,8 +14,17 @@ function [ out ] = deamalmluen( X, Y, Yu, varargin )
 %   distance function with undesirable outputs 'ddf_ccf' (Chung, Fare and 
 %   Grosskopf).
 %   - 'fixbaset': previous year 0 (default), first year 1.
+%   - 'period': compute geometric mean of base and comparison periods for 
+%     technological change ('geomean'), use base period as reference ('base'),
+%     or use comparison period as reference ('comparison').
+%     
+%
+%   Deprecated parameters:
 %   - 'geomean': compute geometric mean for technological change. Default
-%   is 1.
+%     is 1. 'geomean' parameter has been deprecated and will dissapear in a
+%     future realse. Set the new 'period' parapeter to 'geomean' for the 
+%     previous behavior of 'geomean' = 1. Set 'period' to 'base' for the 
+%     preivous behaviour of 'geomean' = 0.
 %
 %   Example
 %     
@@ -88,7 +97,7 @@ function [ out ] = deamalmluen( X, Y, Yu, varargin )
         Eflag = nan(n, (T - 1) * 3);
     end
     
-        % Check if 'geomean' and the old parameter 'period' are correct
+    % Check if 'geomean' and the old parameter 'period' are correct
     if ~isempty(options.geomean)
         warning('''geomean'' parameter has been deprecated and will dissapear in a future realse.\n Set the new ''period'' parameter to ''geomean'' for the previous behavior of ''geomean'' = 1.\n Set ''period'' to ''base'' for the preivous behaviour of ''geomean'' = 0. See help for more information.', 'DEATOOLBOX:deprecated');        
         if options.geomean
@@ -159,8 +168,7 @@ function [ out ] = deamalmluen( X, Y, Yu, varargin )
         
         % Malmquist-Luenberger index
         ML(:, t) = MLTEC(:, t) .* MLTC(:, t);
-        
-        
+                
     end
     
     % Store Malmquist results in the efficiency structure
