@@ -6,7 +6,7 @@ function [ options ] = getDEAoptions( n, varargin )
 %   http://www.deatoolbox.com
 %
 %   Version: 1.0
-%   LAST UPDATE: 18, April, 2016
+%   LAST UPDATE: 6, May, 2017
 %
     
     % Default optimization-options
@@ -41,7 +41,8 @@ function [ options ] = getDEAoptions( n, varargin )
     addPar(p, 'rhoY', [], @(x) isnumeric(x) );
     % Malmquist Index
     addPar(p, 'fixbaset', [], @(x) ismember(x, [0, 1]));
-    addPar(p, 'geomean', 1, @(x) ismember(x, [0, 1]));
+    addPar(p, 'geomean', [], @(x) ismember(x, [0, 1]));
+    addPar(p, 'period', 'geomean', @(x) any(validatestring(x, {'base','comparison','geomean'})) );
     % Allocative Efficiency
     addPar(p, 'Xprice', [], @(x) isnumeric(x));
     addPar(p, 'Yprice', [], @(x) isnumeric(x));

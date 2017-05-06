@@ -9,9 +9,19 @@ function [ out ] = deamalm( X, Y, varargin )
 %   Additional properties:
 %   - 'orient': orientation. Input oriented 'io', output oriented 'oo'.
 %   - 'names': DMU names.
-%   - 'fixbaset': previous year 0 (default), first year 1.
+%   - 'fixbaset': base year is previous year 0 (default), or always the 
+%     first year 1.
+%   - 'period': compute geometric mean of base and comparison periods for 
+%     technological change ('geomean'), use base period as reference ('base'),
+%     or use comparison period as reference ('comparison').
+%     
+%
+%   Deprecated parameters:
 %   - 'geomean': compute geometric mean for technological change. Default
-%   is 1.
+%     is 1. 'geomean' parameter has been deprecated and will dissapear in a
+%     future realse. Set the new 'period' parapeter to 'geomean' for the 
+%     previous behavior of 'geomean' = 1. Set 'period' to 'base' for the 
+%     preivous behaviour of 'geomean' = 0.
 %
 %   Example
 %     
@@ -24,7 +34,7 @@ function [ out ] = deamalm( X, Y, varargin )
 %   http://www.deatoolbox.com
 %
 %   Version: 1.0
-%   LAST UPDATE: 1, May, 2017
+%   LAST UPDATE: 6, May, 2017
 %
 
     % Check size
@@ -61,10 +71,20 @@ function [ out ] = deamalm( X, Y, varargin )
     M = nan(n, T - 1);
     MTEC = nan(n, T - 1);
     MTC = nan(n, T - 1);
-    if options.geomean
-        Eflag = nan(n, (T - 1) * 4);
-    else
-        Eflag = nan(n, (T - 1) * 3);
+    Eflag = nan(n, (T - 1) * 4);
+    
+    % Check if 'geomean' and the old parameter 'period' are correct
+    if ~isempty(options.geomean)
+        warning('''geomean'' parameter has been deprecated and will dissapear in a future realse.\n Set the new ''period'' parameter to ''geomean'' for the previous behavior of ''geomean'' = 1.\n Set ''period'' to ''base'' for the preivous behaviour of ''geomean'' = 0. See help for more information.', 'DEATOOLBOX:deprecated');        
+        if options.geomean
+            if ~strcmp(options.period, 'geomean' )
+                error('If ''geomean'' is set to 1, ''period'' must be set to ''geomean''')
+            end
+        else
+            if ~strcmp(options.period, 'base' )                
+                error('If ''geomean'' is set to 0, ''period'' must be set to ''base''')
+            end
+        end
     end
     
     % For each time period
@@ -78,7 +98,7 @@ function [ out ] = deamalm( X, Y, varargin )
         
         % Compute efficiency at base period
         temp_dea = dea(X(:,:,tb), Y(:,:,tb), varargin{:}, 'secondstep', 0);
-        t_eff = temp_dea.eff;
+        tb_eff = temp_dea.eff;
         Eflag(:, (2*t - 1)) = temp_dea.exitflag(:, 1);
         
         % Compute efficiency at time t + 1
@@ -91,38 +111,42 @@ function [ out ] = deamalm( X, Y, varargin )
                     'Xeval', X(:,:, t + 1),...
                     'Yeval', Y(:,:, t + 1), 'secondstep', 0);
 
-        tevalt1_eff = temp_dea.eff;
+        tbevalt1_eff = temp_dea.eff;
         Eflag(:, (2*t - 1) + 2) = temp_dea.exitflag(:, 1);
         
-        % If geomean
-        if options.geomean
-            % Evaluate each DMU at t + 1, with the others at base period                         
-            temp_dea = dea(X(:,:,t + 1), Y(:,:,t + 1), varargin{:},...
-                    'Xeval', X(:,:, tb),...
-                    'Yeval', Y(:,:, tb), 'secondstep', 0);
+        % Additional calculatiosn for 'geomean' or 'comparison' period
+        switch(options.period)
+            case {'geomean','comparison'}
+                % Evaluate each DMU at base period, with the others at t + 1                        
+                temp_dea = dea(X(:,:,t + 1), Y(:,:,t + 1), varargin{:},...
+                        'Xeval', X(:,:, tb),...
+                        'Yeval', Y(:,:, tb), 'secondstep', 0);
 
-            t1evalt_eff = temp_dea.eff;   
-            Eflag(:, (2*t - 1) + 3) = temp_dea.exitflag(:, 1);
-        else 
-            t1evalt_eff = NaN;
+                t1evaltb_eff = temp_dea.eff;   
+                Eflag(:, (2*t - 1) + 3) = temp_dea.exitflag(:, 1);
+            case 'base' 
+                t1evaltb_eff = NaN;
         end
         
         % Inverse efficiencies if 'oo'
         if strcmp(options.orient, 'oo')
-            t_eff = 1 ./ t_eff;
+            tb_eff = 1 ./ tb_eff;
             t1_eff = 1 ./ t1_eff;
-            tevalt1_eff = 1 ./ tevalt1_eff;
-            t1evalt_eff = 1 ./ t1evalt_eff;
+            tbevalt1_eff = 1 ./ tbevalt1_eff;
+            t1evaltb_eff = 1 ./ t1evaltb_eff;
         end
         
         % Technical Efficiency
-        MTEC(:, t) = t1_eff ./ t_eff;
+        MTEC(:, t) = t1_eff ./ tb_eff;
         
         % Technological Change
-        if options.geomean
-            MTC(:, t) = ((tevalt1_eff ./ t1_eff) .* (t_eff ./ t1evalt_eff)).^(1/2);
-        else
-            MTC(:, t) = tevalt1_eff ./ t1_eff;
+        switch(options.period)
+            case 'geomean'
+                MTC(:, t) = ((tbevalt1_eff ./ t1_eff) .* (tb_eff ./ t1evaltb_eff) ).^(1/2);
+            case 'base'
+                MTC(:, t) = tbevalt1_eff ./ t1_eff ;
+            case 'comparison'
+                MTC(:, t) = tb_eff ./ t1evaltb_eff ;
         end
         
         % Malmquist index
@@ -136,7 +160,7 @@ function [ out ] = deamalm( X, Y, varargin )
     eff.MTC = MTC;
     eff.T = T;
     eff.fixbaset = options.fixbaset;
-    
+    eff.periiod = options.period;
     
     % Extract some results
     neval = NaN;
