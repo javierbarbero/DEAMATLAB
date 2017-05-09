@@ -18,7 +18,7 @@ function [  ] = deadisp( out, dispstr )
 %   http://www.deatoolbox.com
 %
 %   Version: 1.0
-%   LAST UPDATE: 6, May, 2017
+%   LAST UPDATE: 9, May, 2017
 %
 
     % Check if input is a structure
@@ -161,7 +161,7 @@ function [  ] = deadisp( out, dispstr )
             
             % Get name and format
             [name, format] = getDEAformat(paramstr, out.orient);
-            % If no name wind in output structure
+            % If no name in output structure
             if isempty(name)
                 disptext_field = sprintf('disptext_%s', strrep(paramstr,'.','_'));
                 if isfield(out, disptext_field)

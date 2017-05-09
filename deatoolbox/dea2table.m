@@ -21,7 +21,7 @@ function [ T ] = dea2table( out, dispstr )
 %   http://www.deatoolbox.com
 %
 %   Version: 1.0
-%   LAST UPDATE: 12, March, 2017
+%   LAST UPDATE: 9, May, 2017
 %
 
     if nargin < 2
@@ -45,9 +45,23 @@ function [ T ] = dea2table( out, dispstr )
             % Append to Table
             T = [T table(dat)];
             
-            % Set variable name
-            [colname, ~] = getDEAformat(paramstr, out.orient);
-            T.Properties.VariableNames(size(T,2)) = cellstr(colname);
+            % Get variable name
+            [name, ~] = getDEAformat(paramstr, out.orient);
+            
+            % If no name in output structure
+            if isempty(name)
+                disptext_field = sprintf('disptext_%s', strrep(paramstr,'.','_'));
+                if isfield(out, disptext_field)
+                    % If custom name exists in the output structure use it
+                    name = eval(sprintf('out.%s',disptext_field));
+                else
+                    % If not, display paramstr name without eff.
+                    name = strrep(paramstr, 'eff.', '');
+                end
+            end
+            
+            % Store variable name
+            T.Properties.VariableNames(size(T,2)) = cellstr(name);
             
     end
     
