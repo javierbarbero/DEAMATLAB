@@ -14,6 +14,10 @@ function [ out ] = deascale( X, Y, varargin )
 %   - 'Gy': output directions for 'ddf' orientation. Default is Y.
 %   - 'names': DMU names.
 %
+%   Advanced parameters:
+%   - 'Xeval: inputs to evaluate if different from X.
+%   - 'Yeval': outputs to evaluate if different from Y.
+%
 %   Example
 %     
 %      io_scale = deascale(X, Y, 'orient', 'io');
@@ -24,7 +28,7 @@ function [ out ] = deascale( X, Y, varargin )
 %   http://www.deatoolbox.com
 %
 %   Version: 1.0
-%   LAST UPDATE: 1, March, 2016
+%   LAST UPDATE: 9, May, 2017
 %
 
     % Get number of DMU's
@@ -33,13 +37,17 @@ function [ out ] = deascale( X, Y, varargin )
     % Get DEA options
     options = getDEAoptions(n, varargin{:});
     
-    % Xeval, X and Yeval, Y must be equal in this function
-    if ~isempty(options.Xeval) && size(options.Xeval) ~= size(X)
-        error('Xeval and X must be equal')
+    % Xeval, X and Yeval, Y must be of the same size in this function
+    if ~isempty(options.Xeval) 
+        if size(options.Xeval) ~= size(X)
+            error('Xeval and X must be of the same size')
+        end
     end
     
-    if ~isempty(options.Yeval) && size(options.Yeval) ~= size(Y)
-        error('Yeval and Y must be equal')
+    if ~isempty(options.Yeval) 
+        if size(options.Yeval) ~= size(Y)
+            error('Yeval and Y must be of the same size')
+        end
     end
 
     % Compute CRS DEA
