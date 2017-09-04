@@ -11,8 +11,8 @@ function [ out ] = dea( X, Y, varargin)
 %   directional distane function 'ddf'.
 %   - 'rts': returns to scale. Constant returns to scale 'crs', variable
 %   returns to scale 'vrs'.
-%   - 'Gx': input directions for 'ddf' orientation. Default is X.
-%   - 'Gy': output directions for 'ddf' orientation. Default is Y.
+%   - 'Gx': input directions for 'ddf' orientation. Default is Xeval.
+%   - 'Gy': output directions for 'ddf' orientation. Default is Yeval.
 %   - 'names': DMU names.
 %   - 'secondstep': 1 to compute input and output slacks. Default is 1.
 %
@@ -28,11 +28,11 @@ function [ out ] = dea( X, Y, varargin)
 %
 %   See also DEAOUT, DEASCALE, DEAMALM, DEAADDIT, DEASUPER
 %
-%   Copyright 2016 Inmaculada C. ¡lvarez, Javier Barbero, JosÈ L. ZofÌo
+%   Copyright 2016 Inmaculada C. √Ålvarez, Javier Barbero, Jos√© L. Zof√≠o
 %   http://www.deatoolbox.com
 %
 %   Version: 1.0
-%   LAST UPDATE: 26, April, 2017
+%   LAST UPDATE: 1, August, 2017
 %
 
     % Check size
@@ -329,11 +329,11 @@ function [ out ] = dea( X, Y, varargin)
             end
             
             if isempty(Gx)
-                Gx = X;
+                Gx = Xeval;
             end
             
             if isempty(Gy)
-                Gy = Y;
+                Gy = Yeval;
             end
                         
             % For each DMU
