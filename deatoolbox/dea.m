@@ -322,10 +322,14 @@ function [ out ] = dea( X, Y, varargin)
                         
             if length(Gx) == 1
                 Gx = repmat(Gx, size(X,1), size(X,2));
+            elseif size(Gx, 1) == 1
+                Gx = repmat(Gx, size(X,1), 1);
             end
             
             if length(Gy) == 1
                 Gy = repmat(Gy, size(Y,1), size(Y,2));
+            elseif size(Gy, 1) == 1
+                Gy = repmat(Gy, size(Y,1), 1);
             end
             
             if isempty(Gx)
