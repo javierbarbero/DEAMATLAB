@@ -11,6 +11,8 @@ function [ out ] = deaalloc( X, Y, varargin )
 %   Additional properties:
 %   - 'Xprice': input prices.
 %   - 'Yprice': output prices.
+%   - 'rts': returns to scale. Constant returns to scale 'crs', variable
+%   returns to scale 'vrs'.
 %   - 'Gx': input directions for profit model. Default is X.
 %   - 'Gy': output directions for profit model. Default is Y.
 %   - 'names': DMU names.
@@ -27,7 +29,7 @@ function [ out ] = deaalloc( X, Y, varargin )
 %   http://www.deatoolbox.com
 %
 %   Version: 1.0
-%   LAST UPDATE: 26, April, 2017
+%   LAST UPDATE: 6, May, 2018
 %
     
     % Check size
@@ -44,13 +46,6 @@ function [ out ] = deaalloc( X, Y, varargin )
     
     % RETURNS TO SCALE
     rts = options.rts;
-    switch(rts)
-        case 'crs'
-            AeqRTS1 = [];
-            beqRTS1 = [];
-        otherwise
-            error('''rts'' automatically set depending on the allocative model. ''crs'' for cost and revenue. ''vrs'' for profit.')
-    end
     
     % If evaluate DMU at different X or Y
     if ~isempty(options.Xeval)
@@ -104,6 +99,11 @@ function [ out ] = deaalloc( X, Y, varargin )
         orient = 'ddf';
         dispstr = 'names/X/Xprice/Y/Yprice/eff.T/eff.A/eff.P';
     end
+    
+    % Error if RTS is not VRS for profit model
+    if strcmp(model, 'allocative-profit') && ~strcmp(rts, 'vrs')
+        error('RTS must be VRS for allocative profit model');
+    end
         
     % Expand W and P if needed (if all firms have same prices and costs)
     if ~isempty(W) && size(W,1) == 1
@@ -125,8 +125,17 @@ function [ out ] = deaalloc( X, Y, varargin )
     % Solve model depending on the program
     switch model
         
-        % SOLO CRS
+        % COST
         case 'allocative-cost'
+            
+            switch(rts)
+                case 'crs'
+                    AeqRTS1 = [];
+                    beqRTS1 = [];
+                case 'vrs'
+                    AeqRTS1 = [ones(1,n), zeros(1, m)];
+                    beqRTS1 = 1;    
+            end
                 
             % For each DMU
             for j=1:neval
@@ -162,8 +171,17 @@ function [ out ] = deaalloc( X, Y, varargin )
             % Allocative Efficiency
             eff.A = eff.C ./ eff.T;
             
-        % SOLO CRS
+        % REVENUE
         case 'allocative-revenue'
+            
+            switch(rts)
+                case 'crs'
+                    AeqRTS1 = [];
+                    beqRTS1 = [];
+                case 'vrs'
+                    AeqRTS1 = [ones(1,n), zeros(1, s)];
+                    beqRTS1 = 1;    
+            end
             
             % For each DMU
             for j=1:neval
@@ -199,7 +217,7 @@ function [ out ] = deaalloc( X, Y, varargin )
             % Allocative efficiency.
             eff.A = eff.R ./ eff.T;
             
-        % SOLO VRS
+        % PROFIT
         case 'allocative-profit'
             
             % For each DMU
