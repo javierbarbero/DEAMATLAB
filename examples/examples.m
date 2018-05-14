@@ -4,7 +4,7 @@
 %   http://www.deatoolbox.com
 %
 %   Version: 1.0
-%   LAST UPDATE: 16, March, 2016
+%   LAST UPDATE: 14, May, 2016
 %
 
 % Clear and clc
@@ -102,7 +102,7 @@ revenue = deaalloc(X, Y, 'Yprice', P);
 deadisp(revenue);
 
 % 5.3 Overall profit efficiency
-profit = deaalloc(X, Y, 'Xprice', W, 'Yprice', P);
+profit = deaalloc(X, Y, 'Xprice', W, 'Yprice', P, 'rts', 'vrs');
 deadisp(profit, 'names/X/Y/eff.T/eff.A/eff.P');
 
 % 5.4 Profit efficiency: the weighted additive approach
