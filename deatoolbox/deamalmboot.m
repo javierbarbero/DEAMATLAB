@@ -34,7 +34,7 @@ function [ out ] = deamalmboot( X, Y, varargin )
 %   http://www.deatoolbox.com
 %
 %   Version: 1.0
-%   LAST UPDATE: 6, May, 2017
+%   LAST UPDATE: 14, May, 2018
 %
 
     % Check size
@@ -185,6 +185,7 @@ function [ out ] = deamalmboot( X, Y, varargin )
             tbevalt1_eff = temp_dea.eff;
             
             % Additional calculatiosn for 'geomean' or 'comparison' period
+            t1evaltb_eff = NaN;
             switch(options.period)
                 case {'geomean','comparison'}
                     % Evaluate each DMU at t + 1, with the others at base period                         
@@ -193,8 +194,6 @@ function [ out ] = deamalmboot( X, Y, varargin )
                             'Yeval', Y(:,:, tb));
 
                     t1evaltb_eff = temp_dea.eff;    
-                case 'base'  
-                    t1evaltb_eff = NaN;
             end            
             
             % Technical Efficiency
