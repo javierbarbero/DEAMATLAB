@@ -112,8 +112,7 @@ function [ out ] = deaadditsuper( X, Y, varargin )
         if tempdea.eff < 1e-05
             
             % ADDITIVE SUPER-EFFICIENCY
-            
-            
+                        
             % Objective Function
             fsuper = [zeros(1,n - 1), rhoX(j,:) .* ones(1,m), rhoY(j,:) .* ones(1,s)];
             
