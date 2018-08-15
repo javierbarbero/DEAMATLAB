@@ -34,7 +34,7 @@ function [ out ] = deamalmboot( X, Y, varargin )
 %   http://www.deatoolbox.com
 %
 %   Version: 1.0
-%   LAST UPDATE: 14, May, 2018
+%   LAST UPDATE: 11, July, 2018
 %
 
     % Check size
@@ -128,11 +128,20 @@ function [ out ] = deamalmboot( X, Y, varargin )
                 2 - A,     B;
                 2 - A, 2 - B;
                     A, 2 - B];
-        
+                
+        % Draw random samples (outside parallel for reproducibility)
+        DeltaStarReps = nan(n, 2, nreps);
+        idxReps = nan(1, n, nreps);
+        for i=1:nreps
+            [DeltaStarReps(:,:,i), idxReps(:,:,i)] = datasample(Delta, n);
+        end
+
         % For each replication
         parfor i=1:nreps       
-            % Draw random sample
-            [DeltaStar, idx] = datasample(Delta, n);
+
+            % Get random sample
+            DeltaStar = DeltaStarReps(:,:,i);
+            idx = idxReps(:,:,i);
 
             % delta means
             deltaMat = diag(mean(DeltaStar));
@@ -191,7 +200,7 @@ function [ out ] = deamalmboot( X, Y, varargin )
                     % Evaluate each DMU at t + 1, with the others at base period                         
                     temp_dea = dea(Xpseudo2, Y(:,:,t + 1), varargin{:},...
                             'Xeval',Xpseudo1,...
-                            'Yeval', Y(:,:, tb));
+                            'Yeval', Y(:,:, tb), 'secondstep', 0);
 
                     t1evaltb_eff = temp_dea.eff;    
             end            
