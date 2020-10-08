@@ -22,9 +22,9 @@ The toolbox contains the following folders:
 - unittests: unitests of the functions of the toolbox.
 
 ## How to cite
-See instructions at:
+Please, cite the toolbox as:
 
-http://www.deatoolbox.com/how-to-cite/
+Álvarez, Inmaculada C.; Barbero, Javier and Zofío, José L, (2020) A Data Envelopment Analysis Toolbox for MATLAB. Journal of Statistical Software. Volume 95, Issue 3, pp 1-49. http://dx.doi.org/10.18637/jss.v095.i03
 
 ## License
 Code is distributed under the GNU-GPL3
