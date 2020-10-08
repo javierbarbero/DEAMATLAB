@@ -18,7 +18,8 @@ To use the Toolbox add the folder called "deatoolbox" to the MATLAB path.
 
 The toolbox contains the following folders:
 - deatoolbox: all the functions of the toolbox all here. This is the folder you must add to the MATLAB path.
-- examples: examples of all the functions included in the toolbox.
+- examplesjss: examples of all the functions included in the toolbox (JSS version).
+- examples: examples of all the functions included in the toolbox (Working paper version).
 - unittests: unitests of the functions of the toolbox.
 
 ## How to cite
