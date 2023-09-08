@@ -151,7 +151,7 @@ function [ out ] = deaadditprofit( X, Y, varargin )
         lb = zeros(1, n + m + s);
 
         % Optimize
-        z = linprog(f, A, b, Aeq, beq, lb, [], [], optimopts);
+        z = linprog(f, A, b, Aeq, beq, lb, [], optimopts);
 
         % Get efficient inputs
         lambda(j,:) = z(1:n);

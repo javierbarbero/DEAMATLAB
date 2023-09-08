@@ -141,7 +141,7 @@ function [ out ] = dea( X, Y, varargin)
                 lb = zeros(1, n + 1);
                                 
                 % Optimize
-                [z, ~, exitflag, ~, dual] = linprog(f, A, b, Aeq, beq, lb, [], [], optimopts);
+                [z, ~, exitflag, ~, dual] = linprog(f, A, b, Aeq, beq, lb, [], optimopts);
                 if exitflag ~= 1
                     if options.warning
                         warning('DMU %i. First Step. Optimization exit flag: %i', j, exitflag)
@@ -186,7 +186,7 @@ function [ out ] = dea( X, Y, varargin)
                     lb = zeros(n + s + m, 1);
 
                     % Optimize
-                    [z, ~, exitflag] = linprog(f, [], [], Aeq, beq, lb, [], [], optimopts);
+                    [z, ~, exitflag] = linprog(f, [], [], Aeq, beq, lb, [], optimopts);
                     if exitflag ~= 1
                         if options.warning
                             warning('DMU %i. Second Step. Optimization exit flag: %i', j, exitflag)
@@ -237,7 +237,7 @@ function [ out ] = dea( X, Y, varargin)
                 lb = zeros(1, n + 1);
 
                 % Optimize
-                [z, ~, exitflag, ~, dual] = linprog(f, A, b, Aeq, beq, lb, [], [], optimopts);
+                [z, ~, exitflag, ~, dual] = linprog(f, A, b, Aeq, beq, lb, [], optimopts);
                 if exitflag ~= 1
                     if options.warning
                         warning('DMU %i. First Step. Optimization exit flag: %i', j, exitflag)
@@ -282,7 +282,7 @@ function [ out ] = dea( X, Y, varargin)
                     lb = zeros(n + s + m, 1);
 
                     % Optimize
-                    [z, ~, exitflag] = linprog(f, [], [], Aeq, beq, lb, [], [], optimopts);
+                    [z, ~, exitflag] = linprog(f, [], [], Aeq, beq, lb, [], optimopts);
                     if exitflag ~= 1
                         if options.warning
                             warning('DMU %i. Second Step. Optimization exit flag: %i', j, exitflag)
@@ -358,7 +358,7 @@ function [ out ] = dea( X, Y, varargin)
                 lb = [zeros(1, n), -inf];
                 
                 % Optimize
-                [z, ~, exitflag, ~, dual] = linprog(f, A, b, Aeq, beq, lb, [], [], optimopts);
+                [z, ~, exitflag, ~, dual] = linprog(f, A, b, Aeq, beq, lb, [], optimopts);
                 if exitflag ~= 1
                     if options.warning
                         warning('DMU %i. First Step. Optimization exit flag: %i', j, exitflag)
@@ -403,7 +403,7 @@ function [ out ] = dea( X, Y, varargin)
                     lb = zeros(n + s + m, 1);
 
                     % Optimize
-                    [z, ~, exitflag] = linprog(f, [], [], Aeq, beq, lb, [], [], optimopts);
+                    [z, ~, exitflag] = linprog(f, [], [], Aeq, beq, lb, [], optimopts);
                     if exitflag ~= 1
                         if options.warning
                             warning('DMU %i. Second Step. Optimization exit flag: %i', j, exitflag)

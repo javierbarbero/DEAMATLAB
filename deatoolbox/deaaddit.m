@@ -143,7 +143,7 @@ function [ out ] = deaaddit( X, Y, varargin )
                 Y', zeros(s,m), -eye(s,s);               
                AeqRTS2];
         beq = [Xeval(j,:)'; Yeval(j,:)'; beqRTS2];
-        [z, ~, exitflag, ~, dualz] = linprog(f, [], [], Aeq, beq, lb, [], [], optimopts);
+        [z, ~, exitflag, ~, dualz] = linprog(f, [], [], Aeq, beq, lb, [], optimopts);
         if exitflag ~= 1
             if options.warning
                 warning('Optimization exit flag: %i', exitflag)

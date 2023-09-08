@@ -127,7 +127,7 @@ function [ out ] = deaadditsuper( X, Y, varargin )
             Asuper = [ X(others,:)',  -eye(m,m),  zeros(m,s);
                       -Y(others,:)', zeros(s,m), -eye(s,s)];
             bsuper = [X(j,:)'; -Y(j,:)'];
-            [zsuper, ~, exitflag] = linprog(fsuper, Asuper, bsuper, AeqRTS2super, beqRTS2super, lbsuper, [], [], optimopts);
+            [zsuper, ~, exitflag] = linprog(fsuper, Asuper, bsuper, AeqRTS2super, beqRTS2super, lbsuper, [], optimopts);
             if exitflag ~= 1
                 if options.warning
                     warning('Optimization exit flag: %i', exitflag)

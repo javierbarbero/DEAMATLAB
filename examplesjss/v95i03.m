@@ -225,7 +225,7 @@ rng(1234567, 'twister'); % Set seed for reproducibility
 try
     parpool;
 catch
-    disp("Paralell Computing Toolbox not available");    
+    disp("Paralell Computing Toolbox not available or already started");    
 end
 
 % DEA Bootstrapping

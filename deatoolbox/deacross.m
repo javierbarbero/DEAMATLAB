@@ -113,7 +113,7 @@ function [ out ] = deacross( X, Y, varargin )
                 lb = zeros(1, m + s);
                                 
                 % Optimize
-                [z, ~, exitflag] = linprog(f, A, b, Aeq, beq, lb, [], [], optimopts);
+                [z, ~, exitflag] = linprog(f, A, b, Aeq, beq, lb, [], optimopts);
                 if exitflag ~= 1
                     if options.warning
                         warning('DMU %i. First Step. Optimization exit flag: %i', j, exitflag)
@@ -151,7 +151,7 @@ function [ out ] = deacross( X, Y, varargin )
                 lb = zeros(1, m + s);
                                 
                 % Optimize
-                [z, ~, exitflag] = linprog(f, A, b, Aeq, beq, lb, [], [], optimopts);
+                [z, ~, exitflag] = linprog(f, A, b, Aeq, beq, lb, [], optimopts);
                 if exitflag ~= 1
                     if options.warning
                         warning('DMU %i. First Step. Optimization exit flag: %i', j, exitflag)
