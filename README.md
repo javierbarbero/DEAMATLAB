@@ -4,7 +4,7 @@
 
 Version 1.0
 
-http://www.deatoolbox.com
+https://ecorda.org/software/dea-matlab/
 
 ## Authors
 
